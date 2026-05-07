@@ -137,9 +137,16 @@ This means you can run full audits with **only** a Figma access token - no OpenA
 
 ## Environment Variables
 
+Create a `.env` file in the project root:
+
 ```bash
-FIGMA_ACCESS_TOKEN=<your-figma-token>
-OPENAI_API_KEY=<your-openai-key>  # For AI-assisted checks
+FIGMA_ACCESS_TOKEN=your-figma-token
+```
+
+Or set via shell:
+
+```bash
+export FIGMA_ACCESS_TOKEN=<your-figma-token>
 ```
 
 ## Coding Conventions
