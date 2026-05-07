@@ -19,7 +19,7 @@ export function auditCommand(): Command {
     .description("Audit a Figma design system file")
     .argument("<figma-url>", "Figma file URL")
     .option("-k, --api-key <key>", "Figma API key (or set FIGMA_ACCESS_TOKEN)")
-    .option("--ai-key <key>", "AI provider API key (or set ANTHROPIC_API_KEY / OPENAI_API_KEY)")
+    .option("--ai-key <key>", "AI provider API key (optional, for enhanced token classification)")
     .option("--provider <provider>", "AI provider: anthropic or openai", "anthropic")
     .option("--variable-source <source>", "How to fetch variables: rest-api, mcp, or skip", "rest-api")
     .option("--mcp-command <command>", "MCP server command (default: npx -y figma-console-mcp@latest)", "npx")
@@ -71,11 +71,15 @@ export function auditCommand(): Command {
             process.exit(1);
           }
 
+          const aiKey = options.aiKey ?? process.env.ANTHROPIC_API_KEY ?? process.env.OPENAI_API_KEY;
+          
           const variableSource = options.variableSource as "rest-api" | "mcp" | "skip";
 
-          // If variableSource is not specified and no explicit flag, ask interactively
+          // Only prompt if user didn't explicitly specify --variable-source
+          const userSpecifiedVariableSource = process.argv.includes('--variable-source');
           let finalVariableSource = variableSource;
-          if (finalVariableSource === "rest-api") {
+          
+          if (!userSpecifiedVariableSource) {
             // Check if we should prompt
             const response = await prompts({
               type: "select",
@@ -207,7 +211,7 @@ export function auditCommand(): Command {
             }
           }
 
-          const ai = createAIClient({ provider, apiKey: options.aiKey });
+          const ai = aiKey ? createAIClient({ provider, apiKey: aiKey }) : undefined;
 
           console.log("\nFetching component nodes (with bound variable data)...");
           const componentNodes = new Map<string, FigmaNode>();
