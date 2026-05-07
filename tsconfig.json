@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ES2022",
+    "moduleResolution": "bundler",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true
+  },
+  "references": [
+    { "path": "./packages/core" },
+    { "path": "./packages/figma" },
+    { "path": "./packages/agent" },
+    { "path": "./packages/mcp" },
+    { "path": "./packages/cli" },
+    { "path": "./packages/web" }
+  ],
+  "files": []
+}
