@@ -107,13 +107,14 @@ cd packages/cli && npm run dev audit <your-figma-url>
 4. **no-primitive-tokens** (25%): Rule-based check for primitive token usage
 5. **state-variables** (15%): Checks for component state variants
 
-### No AI Required!
+### No External AI Required!
 
-All 5 conformance checks now run **without AI API keys**:
+All 5 conformance checks run **without any external AI API calls**:
 
 - **no-primitive-tokens** check analyzes variable definitions directly:
   - Variables with `VARIABLE_ALIAS` values → ✅ semantic (good)
   - Variables with hardcoded values (colors, numbers) → ❌ primitive (violation)
+  - Shows actual primitive values in violations (e.g., `Modal`, `#FFFFFF`)
   - Suggests semantic alternatives by finding variables that alias the primitive
 
 This means you can run full audits with **only** a Figma access token - no OpenAI/Anthropic costs!

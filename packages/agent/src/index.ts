@@ -8,5 +8,3 @@ export { noPrimitiveTokensCheck } from "./checks/no-primitive-tokens.js";
 export { stateVariablesCheck } from "./checks/state-variables.js";
 export { auditComponent, auditFile } from "./orchestrator.js";
 export type { AuditFileResult, AuditFileOptions } from "./orchestrator.js";
-export { createAIClient } from "./ai/client.js";
-export type { AIClientConfig, AIProvider } from "./ai/client.js";

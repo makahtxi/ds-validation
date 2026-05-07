@@ -9,28 +9,9 @@ import type {
   FigmaNode,
   FigmaStyle,
   FigmaVariable,
-  AIClient,
 } from "@ds-validation/core";
 import { computeComponentScore, computeTotalScore, buildSummary } from "@ds-validation/core";
 import { registry } from "./checks/registry.js";
-
-function createStubAIClient(): AIClient {
-  return {
-    async classifyToken(tokenName: string) {
-      return { classification: "semantic" as const, suggestedReplacement: null };
-    },
-    async classifyTokens(tokens: string[]) {
-      const result: Record<string, { classification: "semantic" | "primitive" | "wrong_category"; suggestedReplacement: string | null }> = {};
-      for (const token of tokens) {
-        result[token] = { classification: "semantic", suggestedReplacement: null };
-      }
-      return result;
-    },
-    async generatePrimitiveTokenSummary() {
-      return { template: "primitive_tokens_clean", params: {} };
-    },
-  };
-}
 
 export interface AuditFileResult {
   audit: AuditResult;
@@ -44,7 +25,6 @@ export interface AuditFileOptions {
   componentNodes: Map<string, FigmaNode>;
   styles: Record<string, FigmaStyle>;
   variables: Record<string, FigmaVariable>;
-  ai?: AIClient;
   checkWeights?: Record<string, number>;
   checkOverrides?: Record<string, { enabled?: boolean; weight?: number }>;
 }
@@ -54,17 +34,13 @@ export async function auditComponent(
   componentNode: FigmaNode,
   styles: Record<string, FigmaStyle>,
   variables: Record<string, FigmaVariable>,
-  ai?: AIClient,
   checkWeights?: Record<string, number>,
   checkOverrides?: Record<string, { enabled?: boolean; weight?: number }>,
 ): Promise<ComponentAuditResult> {
-  const aiClient = ai ?? createStubAIClient();
-  
   const context: CheckContext = {
     componentNode,
     styles,
     variables,
-    ai: aiClient,
   };
 
   const checkResults: Record<string, CheckResult> = {};
@@ -119,12 +95,9 @@ export async function auditFile(
     componentNodes,
     styles,
     variables,
-    ai,
     checkWeights,
     checkOverrides,
   } = options;
-
-  const aiClient = ai ?? createStubAIClient();
 
   const checksToRun = registry.getAll().filter((check) => {
     const override = checkOverrides?.[check.id];
@@ -141,7 +114,6 @@ export async function auditFile(
       node,
       styles,
       variables,
-      aiClient,
       checkWeights,
       checkOverrides,
     );

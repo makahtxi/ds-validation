@@ -4,31 +4,13 @@ import { hardcodedSpacingCheck } from "./hardcoded-spacing";
 import { hardcodedTextStylesCheck } from "./hardcoded-text-styles";
 import { stateVariablesCheck } from "./state-variables";
 import { noPrimitiveTokensCheck } from "./no-primitive-tokens";
-import type { CheckContext, FigmaNode, FigmaVariable, TokenClassification } from "@ds-validation/core";
-
-function makeMockAI(
-  classifications?: Record<string, { classification: TokenClassification; suggestedReplacement: string | null }>,
-) {
-  return {
-    classifyToken: async () => ({ classification: "semantic" as const, suggestedReplacement: null }),
-    classifyTokens: async (tokens: string[]) => {
-      if (!classifications) return {};
-      const result: Record<string, { classification: TokenClassification; suggestedReplacement: string | null }> = {};
-      for (const token of tokens) {
-        result[token] = classifications[token] ?? { classification: "semantic" as const, suggestedReplacement: null };
-      }
-      return result;
-    },
-    generatePrimitiveTokenSummary: async () => ({ template: "primitive_tokens_clean", params: {} }),
-  };
-}
+import type { CheckContext, FigmaNode, FigmaVariable } from "@ds-validation/core";
 
 function makeContext(node: Partial<FigmaNode>): CheckContext {
   return {
     componentNode: node as FigmaNode,
     styles: {},
     variables: {},
-    ai: makeMockAI(),
   };
 }
 
@@ -277,7 +259,6 @@ describe("noPrimitiveTokensCheck", () => {
       } as FigmaNode,
       styles: {},
       variables,
-      ai: makeMockAI(),
     };
 
     const result = await noPrimitiveTokensCheck.run(context);
@@ -310,12 +291,11 @@ describe("noPrimitiveTokensCheck", () => {
       } as FigmaNode,
       styles: {},
       variables,
-      ai: makeMockAI(),
     };
 
     const result = await noPrimitiveTokensCheck.run(context);
     expect(result.violations).toHaveLength(1);
-    expect(result.violations[0].rawValue).toBe("color/red-500");
+    expect(result.violations[0].rawValue).toContain("color/red-500");
   });
 
   it("should suggest a semantic alternative when one exists", async () => {
@@ -353,12 +333,11 @@ describe("noPrimitiveTokensCheck", () => {
       } as FigmaNode,
       styles: {},
       variables,
-      ai: makeMockAI(),
     };
 
     const result = await noPrimitiveTokensCheck.run(context);
     expect(result.violations).toHaveLength(1);
-    expect(result.violations[0].rawValue).toBe("color/red-500");
+    expect(result.violations[0].rawValue).toContain("color/red-500");
     expect(result.violations[0].suggestedReplacement).toBe("color/action-primary");
   });
 
@@ -393,7 +372,6 @@ describe("noPrimitiveTokensCheck", () => {
       } as FigmaNode,
       styles: {},
       variables,
-      ai: makeMockAI(),
     };
 
     const result = await noPrimitiveTokensCheck.run(context);

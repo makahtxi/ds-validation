@@ -19,11 +19,8 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@ai-sdk/anthropic": "^3.0.75",
-    "@ai-sdk/openai": "^3.0.62",
     "@ds-validation/core": "*",
-    "@ds-validation/figma": "*",
-    "ai": "^6.0.175"
+    "@ds-validation/figma": "*"
   },
   "devDependencies": {
     "typescript": "^5.7.0",
