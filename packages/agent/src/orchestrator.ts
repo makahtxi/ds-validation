@@ -12,7 +12,6 @@ import type {
 } from "@ds-validation/core";
 import { computeComponentScore, computeTotalScore, buildSummary } from "@ds-validation/core";
 import { registry } from "./checks/registry.js";
-import type { AIClient } from "@ds-validation/core";
 
 export interface AuditFileResult {
   audit: AuditResult;
@@ -26,7 +25,6 @@ export interface AuditFileOptions {
   componentNodes: Map<string, FigmaNode>;
   styles: Record<string, FigmaStyle>;
   variables: Record<string, FigmaVariable>;
-  ai: AIClient;
   checkWeights?: Record<string, number>;
   checkOverrides?: Record<string, { enabled?: boolean; weight?: number }>;
 }
@@ -36,7 +34,6 @@ export async function auditComponent(
   componentNode: FigmaNode,
   styles: Record<string, FigmaStyle>,
   variables: Record<string, FigmaVariable>,
-  ai: AIClient,
   checkWeights?: Record<string, number>,
   checkOverrides?: Record<string, { enabled?: boolean; weight?: number }>,
 ): Promise<ComponentAuditResult> {
@@ -44,7 +41,6 @@ export async function auditComponent(
     componentNode,
     styles,
     variables,
-    ai,
   };
 
   const checkResults: Record<string, CheckResult> = {};
@@ -99,7 +95,6 @@ export async function auditFile(
     componentNodes,
     styles,
     variables,
-    ai,
     checkWeights,
     checkOverrides,
   } = options;
@@ -119,7 +114,6 @@ export async function auditFile(
       node,
       styles,
       variables,
-      ai,
       checkWeights,
       checkOverrides,
     );

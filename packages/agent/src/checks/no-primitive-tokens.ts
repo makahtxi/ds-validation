@@ -117,6 +117,21 @@ function findSemanticAlternative(
   return candidates.length > 0 ? candidates[0].name : null;
 }
 
+function getPrimitiveValueDisplay(variable: FigmaVariable): string {
+  const values = Object.values(variable.valuesByMode);
+  if (values.length === 0) return "unknown value";
+  
+  const value = values[0];
+  if (typeof value === "number") return value.toString();
+  if (typeof value === "string") return `"${value}"`;
+  if (typeof value === "boolean") return value.toString();
+  if (typeof value === "object" && value !== null && "r" in value) {
+    const color = value as { r: number; g: number; b: number; a: number };
+    return `#${Math.round(color.r * 255).toString(16).padStart(2, "0")}${Math.round(color.g * 255).toString(16).padStart(2, "0")}${Math.round(color.b * 255).toString(16).padStart(2, "0")}`;
+  }
+  return "unknown value";
+}
+
 export const noPrimitiveTokensCheck: ConformanceCheck = {
   id: "no-primitive-tokens",
   name: "No Primitive Tokens",
@@ -145,6 +160,8 @@ export const noPrimitiveTokensCheck: ConformanceCheck = {
     }
 
     const violations: Violation[] = [];
+    const primitiveExamples: string[] = [];
+    
     for (const ref of refs) {
       const variable = context.variables[ref.varId];
       if (!variable) continue;
@@ -155,13 +172,18 @@ export const noPrimitiveTokensCheck: ConformanceCheck = {
           variable.name,
           context.variables,
         );
+        const primitiveValue = getPrimitiveValueDisplay(variable);
         violations.push({
           nodePath: ref.nodePath,
           property: ref.property,
-          rawValue: variable.name,
+          rawValue: `${variable.name} (${primitiveValue})`,
           expected: "A semantic/component-level token",
           suggestedReplacement: suggestedReplacement ?? undefined,
         });
+        
+        if (primitiveExamples.length < 3) {
+          primitiveExamples.push(`${variable.name}=${primitiveValue}`);
+        }
       }
     }
 
@@ -170,7 +192,10 @@ export const noPrimitiveTokensCheck: ConformanceCheck = {
 
     let summary;
     if (violations.length > 0) {
-      summary = await context.ai.generatePrimitiveTokenSummary(violations);
+      summary = buildSummary("primitive_tokens_found", {
+        count: violations.length,
+        examples: primitiveExamples.join(", "),
+      });
     } else {
       summary = buildSummary("primitive_tokens_clean");
     }

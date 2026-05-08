@@ -16,7 +16,6 @@ export interface CheckContext {
   componentNode: FigmaNode;
   styles: Record<string, FigmaStyle>;
   variables: Record<string, FigmaVariable>;
-  ai: AIClient;
 }
 
 export interface CheckResult {
@@ -38,28 +37,6 @@ export interface Violation {
 export interface SummaryEntry {
   template: string;
   params: Record<string, string | number>;
-}
-
-export type TokenClassification = "semantic" | "primitive" | "wrong_category";
-
-export interface TokenClassificationResult {
-  classification: TokenClassification;
-  suggestedReplacement: string | null;
-  category?: string;
-}
-
-export interface AIClient {
-  classifyToken(
-    tokenName: string,
-    semanticTokenList: string[],
-  ): Promise<TokenClassificationResult>;
-
-  classifyTokens(
-    tokens: string[],
-    semanticTokenList: string[],
-  ): Promise<Record<string, TokenClassificationResult>>;
-
-  generatePrimitiveTokenSummary(violations: Violation[]): Promise<SummaryEntry>;
 }
 
 export interface ConformanceCheckConfig {
