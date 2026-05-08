@@ -50,10 +50,13 @@ npm run format
 
 ```bash
 # CLI - run interactive audit
-cd packages/cli && npm run dev audit <figma-url>
+npm run audit -- <figma-url>
 
 # CLI - generate config
-cd packages/cli && npm run dev init
+npm run init
+
+# CLI - view report
+npm run report
 
 # Web - start dashboard
 cd packages/web && npm run dev
@@ -61,32 +64,17 @@ cd packages/web && npm run dev
 
 ## Running Inside AI Coding Agents
 
-### Claude Code
+### All Agents
 
 ```bash
-# Set environment variables first
+# Set environment variable first
 export FIGMA_ACCESS_TOKEN=your-token
 
-# Then ask Claude Code to run the audit
-claude "run npm run dev audit <your-figma-url> from packages/cli directory"
+# Then run from project root
+npm run audit -- <figma-url>
 ```
 
-### GitHub Copilot Workspace
-
-```bash
-# In Copilot chat, request:
-"Run the DS Validation CLI audit command with this Figma URL: <your-figma-url>"
-
-# Or execute directly in terminal:
-cd packages/cli && npm run dev audit <your-figma-url>
-```
-
-### OpenCode
-
-```bash
-# Ask OpenCode to execute:
-"Execute: cd packages/cli && npm run dev audit <your-figma-url>"
-```
+> **Note on Windows:** The `audit`/`report`/`init` scripts invoke `node packages/cli/dist/index.js` directly, bypassing npm bin symlinks which may not work on Windows without Developer Mode. Always run these commands from the project root.
 
 > **Note:** You need `FIGMA_ACCESS_TOKEN` environment variable set - this is required to fetch Figma file data. All 5 checks run without AI API keys!
 

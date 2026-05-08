@@ -1,17 +1,9 @@
 #!/usr/bin/env node
-import { config } from "dotenv";
-import { fileURLToPath } from "url";
-import { dirname, resolve } from "path";
+import "dotenv/config";
 import { Command } from "commander";
 import { auditCommand } from "./commands/audit.js";
 import { reportCommand } from "./commands/report.js";
 import { initCommand } from "./commands/init.js";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-config({ path: resolve(__dirname, "../../../.env") });
-config({ path: resolve(process.cwd(), ".env") });
 
 const program = new Command();
 

@@ -10,7 +10,10 @@
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "audit": "node packages/cli/dist/index.js audit",
+    "init": "node packages/cli/dist/index.js init",
+    "report": "node packages/cli/dist/index.js report"
   },
   "packageManager": "npm@10.9.2",
   "devDependencies": {
