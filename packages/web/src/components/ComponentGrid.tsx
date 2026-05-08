@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { scoreColor, scoreBg } from "../lib/utils";
+import { scoreColor, scoreBg, sanitizeFileName } from "../lib/utils";
 
 interface ComponentGridProps {
   components: {
@@ -8,6 +8,7 @@ interface ComponentGridProps {
     jsonPath: string;
     passedChecks: number;
     totalChecks: number;
+    pageName: string;
   }[];
 }
 
@@ -21,7 +22,7 @@ export function ComponentGrid({ components }: ComponentGridProps) {
       {components.map((comp) => (
         <Link
           key={comp.name}
-          href={`/components/${comp.name.replace(/\//g, "_")}`}
+          href={`/components/${sanitizeFileName(comp.name)}`}
           className={`block border rounded-lg p-4 hover:shadow-md transition-shadow ${scoreBg(comp.score)}`}
         >
           <div className="flex items-center justify-between">
