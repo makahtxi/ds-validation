@@ -23,6 +23,7 @@ export interface AuditFileOptions {
   fileName: string;
   pageNames: string[];
   componentNodes: Map<string, FigmaNode>;
+  componentPageMap: Map<string, string>;
   styles: Record<string, FigmaStyle>;
   variables: Record<string, FigmaVariable>;
   checkWeights?: Record<string, number>;
@@ -32,6 +33,7 @@ export interface AuditFileOptions {
 export async function auditComponent(
   componentName: string,
   componentNode: FigmaNode,
+  pageName: string,
   styles: Record<string, FigmaStyle>,
   variables: Record<string, FigmaVariable>,
   checkWeights?: Record<string, number>,
@@ -82,6 +84,7 @@ export async function auditComponent(
     componentName,
     score,
     checkResults,
+    pageName,
   };
 }
 
@@ -93,6 +96,7 @@ export async function auditFile(
     fileName,
     pageNames,
     componentNodes,
+    componentPageMap,
     styles,
     variables,
     checkWeights,
@@ -109,9 +113,11 @@ export async function auditFile(
   const componentSummaries: ComponentSummary[] = [];
 
   for (const [name, node] of componentNodes) {
+    const pageName = componentPageMap.get(name) ?? "Unknown";
     const result = await auditComponent(
       name,
       node,
+      pageName,
       styles,
       variables,
       checkWeights,
@@ -126,6 +132,7 @@ export async function auditFile(
         (r) => r.status === "pass",
       ).length,
       totalChecks: Object.keys(result.checkResults).length,
+      pageName,
     });
   }
 
