@@ -10,7 +10,7 @@ import type {
   FigmaStyle,
   FigmaVariable,
 } from "@ds-validation/core";
-import { computeComponentScore, computeTotalScore, buildSummary } from "@ds-validation/core";
+import { computeComponentScore, computeTotalScore, buildSummary, sanitizeComponentName } from "@ds-validation/core";
 import { registry } from "./checks/registry.js";
 
 export interface AuditFileResult {
@@ -127,7 +127,7 @@ export async function auditFile(
     componentSummaries.push({
       name,
       score: result.score,
-      jsonPath: `components/${name.replace(/[^a-zA-Z0-9_-]/g, "_")}.json`,
+      jsonPath: `components/${sanitizeComponentName(name)}.json`,
       passedChecks: Object.values(result.checkResults).filter(
         (r) => r.status === "pass",
       ).length,
