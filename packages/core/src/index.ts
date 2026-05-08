@@ -38,7 +38,9 @@ export {
 
 export { buildSummary, renderSummary, SUMMARY_TEMPLATES } from "./templates/templates.js";
 
-export { writeAuditResult, writeComponentResult } from "./output/writer.js";
+export { writeAuditResult, loadAuditResult, writeComponentResult, sanitizeComponentName } from "./output/writer.js";
+
+export { mergeAuditResults, buildComponentSummary } from "./output/merge.js";
 
 export {
   AuditResultSchema,

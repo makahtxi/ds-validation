@@ -2,7 +2,12 @@ import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
 import os from "node:os";
-import { writeAuditResult, writeComponentResult } from "./writer.js";
+import {
+  writeAuditResult,
+  writeComponentResult,
+  loadAuditResult,
+  sanitizeComponentName,
+} from "./writer.js";
 import type { AuditResult, ComponentAuditResult } from "../types/checks.js";
 
 function makeAuditResult(overrides?: Partial<AuditResult>): AuditResult {
@@ -110,5 +115,74 @@ describe("writeComponentResult", () => {
 
     expect(filePath).toBe(path.join(tmpDir, "components", "My_Button.json"));
     expect(fs.existsSync(filePath)).toBe(true);
+  });
+});
+
+describe("loadAuditResult", () => {
+  let tmpDir: string;
+
+  beforeEach(() => {
+    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "ds-validation-test-"));
+  });
+
+  afterEach(() => {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  });
+
+  it("returns null when audit.json does not exist", () => {
+    expect(loadAuditResult(tmpDir)).toBeNull();
+  });
+
+  it("reads and parses a valid audit.json", () => {
+    const result = makeAuditResult();
+    writeAuditResult(tmpDir, result);
+
+    const loaded = loadAuditResult(tmpDir);
+    expect(loaded).not.toBeNull();
+    expect(loaded!.meta.figmaFileKey).toBe("test-file-key");
+    expect(loaded!.components).toHaveLength(1);
+  });
+
+  it("returns null and warns when audit.json is corrupted", () => {
+    fs.writeFileSync(path.join(tmpDir, "audit.json"), "not valid json {{{");
+
+    const loaded = loadAuditResult(tmpDir);
+    expect(loaded).toBeNull();
+  });
+
+  it("returns null when audit.json has invalid schema", () => {
+    fs.writeFileSync(
+      path.join(tmpDir, "audit.json"),
+      JSON.stringify({ foo: "bar" }),
+    );
+
+    const loaded = loadAuditResult(tmpDir);
+    expect(loaded).toBeNull();
+  });
+});
+
+describe("sanitizeComponentName", () => {
+  it("leaves alphanumeric names unchanged", () => {
+    expect(sanitizeComponentName("Button")).toBe("Button");
+  });
+
+  it("replaces slashes with underscores", () => {
+    expect(sanitizeComponentName("Button/Primary")).toBe("Button_Primary");
+  });
+
+  it("replaces spaces with underscores", () => {
+    expect(sanitizeComponentName("My Button")).toBe("My_Button");
+  });
+
+  it("replaces dots with underscores", () => {
+    expect(sanitizeComponentName("Button.v2")).toBe("Button_v2");
+  });
+
+  it("replaces multiple special characters", () => {
+    expect(sanitizeComponentName("My/Button v2.0")).toBe("My_Button_v2_0");
+  });
+
+  it("preserves hyphens and underscores", () => {
+    expect(sanitizeComponentName("my-button_test")).toBe("my-button_test");
   });
 });

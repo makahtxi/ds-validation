@@ -1,13 +1,17 @@
 import { Command } from "commander";
 import prompts from "prompts";
 import { FigmaClient } from "@ds-validation/figma";
-import { auditFile } from "@ds-validation/agent";
+import { auditFile, registry } from "@ds-validation/agent";
 import { McpVariableClient } from "@ds-validation/mcp";
 import {
   writeAuditResult,
+  loadAuditResult,
   writeComponentResult,
+  mergeAuditResults,
+  buildComponentSummary,
   type FigmaNode,
   type FigmaVariable,
+  type AuditResult,
 } from "@ds-validation/core";
 import { parseFileKey } from "../utils.js";
 
@@ -232,7 +236,38 @@ export function auditCommand(): Command {
           });
 
           const outputDir = options.output;
-          writeAuditResult(outputDir, result.audit);
+
+          const existingAudit = loadAuditResult(outputDir);
+          let mergedAudit: AuditResult;
+
+          if (existingAudit && existingAudit.meta.figmaFileKey === fileKey) {
+            const skippedChecks = registry.getAll().filter((check) => {
+              const override = checkOverrides?.[check.id];
+              return override?.enabled === false;
+            });
+
+            const newSummaries = result.components.map((c) =>
+              buildComponentSummary(
+                c.componentName,
+                c.score,
+                Object.values(c.checkResults).filter((r) => r.status === "pass").length,
+                Object.keys(c.checkResults).length,
+                c.pageName,
+              ),
+            );
+
+            mergedAudit = mergeAuditResults({
+              existing: existingAudit,
+              newResult: result.audit,
+              newComponentSummaries: newSummaries,
+              newPageNames: selectedPageNames,
+              skippedCheckNames: skippedChecks.map((c) => c.name),
+            });
+          } else {
+            mergedAudit = result.audit;
+          }
+
+          writeAuditResult(outputDir, mergedAudit);
 
           for (const compResult of result.components) {
             writeComponentResult(outputDir, compResult);
