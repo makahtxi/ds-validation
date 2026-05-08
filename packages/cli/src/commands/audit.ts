@@ -1,13 +1,18 @@
 import { Command } from "commander";
 import prompts from "prompts";
 import { FigmaClient } from "@ds-validation/figma";
-import { auditFile } from "@ds-validation/agent";
+import { auditFile, registry } from "@ds-validation/agent";
 import { McpVariableClient } from "@ds-validation/mcp";
 import {
   writeAuditResult,
+  loadAuditResult,
   writeComponentResult,
   type FigmaNode,
   type FigmaVariable,
+  type ComponentSummary,
+  type AuditResult,
+  computeTotalScore,
+  buildSummary,
 } from "@ds-validation/core";
 import { parseFileKey } from "../utils.js";
 
@@ -232,7 +237,74 @@ export function auditCommand(): Command {
           });
 
           const outputDir = options.output;
-          writeAuditResult(outputDir, result.audit);
+
+          const existingAudit = loadAuditResult(outputDir);
+          let mergedAudit: AuditResult;
+
+          if (existingAudit && existingAudit.meta.figmaFileKey === fileKey) {
+            const existingMap = new Map<string, ComponentSummary>(
+              existingAudit.components.map((c) => [c.name, c]),
+            );
+
+            for (const compResult of result.components) {
+              existingMap.set(compResult.componentName, {
+                name: compResult.componentName,
+                score: compResult.score,
+                jsonPath: `components/${compResult.componentName.replace(/[^a-zA-Z0-9_-]/g, "_")}.json`,
+                passedChecks: Object.values(compResult.checkResults).filter(
+                  (r) => r.status === "pass",
+                ).length,
+                totalChecks: Object.keys(compResult.checkResults).length,
+                pageName: compResult.pageName,
+              });
+            }
+
+            const mergedComponents = Array.from(existingMap.values());
+            const mergedTotalScore = computeTotalScore(
+              mergedComponents.map((c) => c.score),
+            );
+
+            const allPages = [
+              ...new Set([
+                ...existingAudit.meta.pagesAudited,
+                ...selectedPageNames,
+              ]),
+            ];
+
+            const skippedChecks = registry.getAll().filter((check) => {
+              const override = checkOverrides?.[check.id];
+              return override?.enabled === false;
+            });
+
+            const summaryParams: Record<string, string | number> = {
+              componentCount: mergedComponents.length,
+              totalScore: mergedTotalScore,
+            };
+
+            if (skippedChecks.length > 0) {
+              summaryParams.skippedChecks = skippedChecks.map((c) => c.name).join(", ");
+            }
+
+            mergedAudit = {
+              meta: {
+                figmaFileKey: fileKey,
+                figmaFileName: fileMeta.name,
+                auditedAt: new Date().toISOString(),
+                pagesAudited: allPages,
+                conformanceChecks: result.audit.meta.conformanceChecks,
+              },
+              totalScore: mergedTotalScore,
+              summary: buildSummary(
+                skippedChecks.length > 0 ? "audit_overview_partial" : "audit_overview",
+                summaryParams,
+              ),
+              components: mergedComponents,
+            };
+          } else {
+            mergedAudit = result.audit;
+          }
+
+          writeAuditResult(outputDir, mergedAudit);
 
           for (const compResult of result.components) {
             writeComponentResult(outputDir, compResult);

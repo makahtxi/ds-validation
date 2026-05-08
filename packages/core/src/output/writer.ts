@@ -2,6 +2,13 @@ import fs from "node:fs";
 import path from "node:path";
 import type { AuditResult, ComponentAuditResult } from "../types/checks.js";
 
+export function loadAuditResult(outputDir: string): AuditResult | null {
+  const filePath = path.join(outputDir, "audit.json");
+  if (!fs.existsSync(filePath)) return null;
+  const raw = fs.readFileSync(filePath, "utf-8");
+  return JSON.parse(raw) as AuditResult;
+}
+
 export function writeAuditResult(
   outputDir: string,
   result: AuditResult,
