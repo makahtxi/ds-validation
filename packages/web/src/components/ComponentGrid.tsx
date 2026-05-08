@@ -21,7 +21,7 @@ export function ComponentGrid({ components }: ComponentGridProps) {
       {components.map((comp) => (
         <Link
           key={comp.name}
-          href={`/components/${encodeURIComponent(comp.name)}`}
+          href={`/components/${comp.name.replace(/\//g, "_")}`}
           className={`block border rounded-lg p-4 hover:shadow-md transition-shadow ${scoreBg(comp.score)}`}
         >
           <div className="flex items-center justify-between">
