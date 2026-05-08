@@ -200,6 +200,7 @@ export function auditCommand(): Command {
 
           console.log("\nFetching component nodes (with bound variable data)...");
           const componentNodes = new Map<string, FigmaNode>();
+          const componentPageMap = new Map<string, string>();
 
           for (const page of selectedPages) {
             const components = await figmaClient.getComponentNodesWithData(
@@ -208,6 +209,7 @@ export function auditCommand(): Command {
             );
             for (const comp of components) {
               componentNodes.set(comp.name, comp);
+              componentPageMap.set(comp.name, page.name);
             }
           }
 
@@ -223,6 +225,7 @@ export function auditCommand(): Command {
             fileName: fileMeta.name,
             pageNames: selectedPageNames,
             componentNodes,
+            componentPageMap,
             styles,
             variables,
             checkOverrides,

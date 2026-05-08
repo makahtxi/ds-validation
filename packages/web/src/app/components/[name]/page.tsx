@@ -10,8 +10,7 @@ interface PageProps {
 
 export default async function ComponentDetailPage({ params }: PageProps) {
   const { name } = await params;
-  const decodedName = decodeURIComponent(name);
-  const component = loadComponentData(decodedName);
+  const component = loadComponentData(name);
   const audit = loadAuditData();
 
   if (!component) {
@@ -20,7 +19,7 @@ export default async function ComponentDetailPage({ params }: PageProps) {
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-2">Component Not Found</h1>
           <p className="text-gray-600">
-            No audit data found for &ldquo;{decodedName}&rdquo;
+            No audit data found for &ldquo;{name}&rdquo;
           </p>
           <Link href="/" className="text-blue-600 hover:underline mt-4 block">
             Back to overview

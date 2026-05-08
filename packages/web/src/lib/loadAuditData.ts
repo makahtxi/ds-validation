@@ -20,6 +20,7 @@ export interface AuditData {
     jsonPath: string;
     passedChecks: number;
     totalChecks: number;
+    pageName: string;
   }[];
 }
 

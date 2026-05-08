@@ -53,6 +53,7 @@ export interface ComponentSummary {
   jsonPath: string;
   passedChecks: number;
   totalChecks: number;
+  pageName: string;
 }
 
 export interface AuditResult {
@@ -74,4 +75,5 @@ export interface ComponentAuditResult {
   componentName: string;
   score: number;
   checkResults: Record<string, CheckResult>;
+  pageName: string;
 }

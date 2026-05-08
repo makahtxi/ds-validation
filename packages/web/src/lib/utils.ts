@@ -22,3 +22,7 @@ export function statusBadge(status: string): string {
       return "bg-gray-200 text-gray-800";
   }
 }
+
+export function sanitizeFileName(name: string): string {
+  return name.replace(/[^a-zA-Z0-9_-]/g, "_");
+}
