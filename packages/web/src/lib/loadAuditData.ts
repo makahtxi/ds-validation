@@ -27,6 +27,7 @@ export interface AuditData {
 export interface ComponentData {
   componentName: string;
   score: number;
+  pageName: string;
   checkResults: Record<
     string,
     {
