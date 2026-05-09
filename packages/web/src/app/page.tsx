@@ -1,7 +1,9 @@
 import { loadAuditData } from "@/lib/loadAuditData";
-import { ScoreGauge } from "@/components/ScoreGauge";
-import { SummaryRenderer } from "@/components/SummaryRenderer";
-import { ComponentGrid } from "@/components/ComponentGrid";
+import { HeroSection } from "@/components/HeroSection";
+import { ChecksRow } from "@/components/ChecksRow";
+import { DashboardClient } from "@/components/DashboardClient";
+import { CHECK_DEFS, statusForScore, gradeForScore } from "@/lib/utils";
+import Link from "next/link";
 
 export default function HomePage() {
   const audit = loadAuditData();
@@ -19,56 +21,80 @@ export default function HomePage() {
     );
   }
 
-  const groupedByPage = audit.components.reduce<Record<string, typeof audit.components>>(
-    (acc, comp) => {
-      const page = comp.pageName ?? "Unknown";
-      if (!acc[page]) acc[page] = [];
-      acc[page].push(comp);
-      return acc;
-    },
-    {},
-  );
-
-  const pageOrder = audit.meta.pagesAudited.filter((page) => groupedByPage[page]?.length > 0);
-  const unknownComponents = groupedByPage["Unknown"] ?? [];
-  if (unknownComponents.length > 0) {
-    pageOrder.push("Unknown");
+  const componentBuckets = { pass: 0, partial: 0, fail: 0 };
+  for (const c of audit.components) {
+    componentBuckets[statusForScore(c.score)]++;
   }
 
+  const byCheck = Object.fromEntries(
+    CHECK_DEFS.map((d) => [d.id, { sum: 0, total: 0, pass: 0, partial: 0, fail: 0 }]),
+  ) as Record<string, { sum: number; total: number; pass: number; partial: number; fail: number; avg: number }>;
+
+  for (const c of audit.components) {
+    const passed = c.passedChecks || 0;
+    const total = c.totalChecks || 5;
+    const fails = c.score < 50 ? 1 : 0;
+    CHECK_DEFS.forEach((d, i) => {
+      const bucket = byCheck[d.id];
+      bucket.total++;
+      let s: "pass" | "partial" | "fail";
+      if (i < passed) s = "pass";
+      else if (i >= total - fails) s = "fail";
+      else s = "partial";
+      bucket[s]++;
+      bucket.sum += s === "pass" ? 100 : s === "fail" ? 25 : 70;
+    });
+  }
+  for (const k of Object.keys(byCheck)) {
+    byCheck[k].avg = byCheck[k].sum / byCheck[k].total;
+  }
+
+  const aggregates = { byCheck, componentBuckets };
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b px-6 py-4">
-        <h1 className="text-2xl font-bold">DS Validation</h1>
-        <p className="text-gray-500 text-sm mt-1">
-          {audit.meta.figmaFileName} — audited{" "}
-          {new Date(audit.meta.auditedAt).toLocaleDateString()}
-        </p>
-      </header>
-
-      <main className="max-w-6xl mx-auto px-6 py-8">
-        <div className="flex items-center gap-8 mb-8">
-          <ScoreGauge score={audit.totalScore} />
-          <div>
-            <h2 className="text-xl font-semibold mb-1">Overall Score</h2>
-            <SummaryRenderer entry={audit.summary} />
-            <p className="text-gray-500 text-sm mt-2">
-              {audit.components.length} component(s) audited across {pageOrder.length} page(s)
-            </p>
-          </div>
+    <div className="shell">
+      <div className="topbar">
+        <Link className="logo" href="/">
+          <span className="logo-mark" />
+          <span>
+            DS<span style={{ color: "var(--text-faint)" }}>&middot;</span>
+            <span style={{ color: "var(--text-muted)" }}>Validation</span>
+          </span>
+        </Link>
+        <div className="crumbs">
+          <span className="sep">/</span>
+          <Link href="/">{audit.meta.figmaFileName}</Link>
         </div>
+        <div className="spacer" />
+        <div className="meta">
+          <span className="pill">
+            <span className="dot" />
+            {audit.totalScore}/100 &middot; {gradeForScore(audit.totalScore).label}
+          </span>
+          <span>
+            file &middot; <span className="mono" style={{ color: "var(--text)" }}>{audit.meta.figmaFileKey.slice(0, 10)}</span>
+          </span>
+        </div>
+      </div>
 
-        {pageOrder.map((pageName) => (
-          <section key={pageName} className="mb-10">
-            <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-              {pageName}
-              <span className="text-sm font-normal text-gray-400">
-                ({groupedByPage[pageName].length})
-              </span>
-            </h2>
-            <ComponentGrid components={groupedByPage[pageName]} />
-          </section>
-        ))}
-      </main>
+      <div className="page">
+        <HeroSection audit={audit} aggregates={aggregates} />
+        <ChecksRow audit={audit} aggregates={aggregates} />
+        <DashboardClient audit={audit} />
+      </div>
+
+      <div
+        style={{
+          textAlign: "center",
+          padding: "40px 20px 20px",
+          fontFamily: "var(--mono)",
+          fontSize: 11,
+          color: "var(--text-faint)",
+        }}
+      >
+        DS Validation &mdash; design system conformance audit
+      </div>
     </div>
   );
 }
+

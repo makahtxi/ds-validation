@@ -1,4 +1,4 @@
-import { scoreColor } from "../lib/utils";
+import { statusForScore } from "../lib/utils";
 
 interface ScoreGaugeProps {
   score: number;
@@ -6,49 +6,42 @@ interface ScoreGaugeProps {
 }
 
 export function ScoreGauge({ score, size = "lg" }: ScoreGaugeProps) {
-  const radius = size === "lg" ? 54 : 36;
-  const strokeWidth = size === "lg" ? 8 : 6;
-  const circumference = 2 * Math.PI * radius;
-  const offset = circumference - (score / 100) * circumference;
-  const dimension = size === "lg" ? 128 : 88;
-  const fontSize = size === "lg" ? "text-3xl" : "text-xl";
-
-  const strokeColor =
-    score >= 80 ? "#16a34a" : score >= 50 ? "#ca8a04" : "#dc2626";
+  const gaugeSize = size === "lg" ? 96 : 64;
+  const strokeWidth = size === "lg" ? 8 : 5;
+  const r = (gaugeSize - strokeWidth) / 2;
+  const c = 2 * Math.PI * r;
+  const dash = (Math.max(0, Math.min(100, score)) / 100) * c;
+  const status = statusForScore(score);
+  const color = status === "pass" ? "var(--pass)" : status === "partial" ? "var(--partial)" : "var(--fail)";
 
   return (
-    <div className="relative inline-flex items-center justify-center">
-      <svg
-        width={dimension}
-        height={dimension}
-        viewBox={`0 0 ${dimension} ${dimension}`}
-      >
+    <div className="gauge" style={{ width: gaugeSize, height: gaugeSize }}>
+      <svg width={gaugeSize} height={gaugeSize}>
         <circle
-          cx={dimension / 2}
-          cy={dimension / 2}
-          r={radius}
-          fill="none"
-          stroke="#e5e7eb"
+          cx={gaugeSize / 2}
+          cy={gaugeSize / 2}
+          r={r}
+          stroke="var(--bg-sunken)"
           strokeWidth={strokeWidth}
+          fill="none"
         />
         <circle
-          cx={dimension / 2}
-          cy={dimension / 2}
-          r={radius}
-          fill="none"
-          stroke={strokeColor}
+          cx={gaugeSize / 2}
+          cy={gaugeSize / 2}
+          r={r}
+          stroke={color}
           strokeWidth={strokeWidth}
-          strokeDasharray={circumference}
-          strokeDashoffset={offset}
+          fill="none"
+          strokeDasharray={`${dash} ${c - dash}`}
           strokeLinecap="round"
-          transform={`rotate(-90 ${dimension / 2} ${dimension / 2})`}
         />
       </svg>
-      <span
-        className={`absolute ${fontSize} font-bold ${scoreColor(score)}`}
-      >
-        {score}
-      </span>
+      <div className="gauge-text">
+        <div className="gauge-num" style={{ fontSize: size === "lg" ? 24 : 16 }}>
+          {score}
+        </div>
+        <div className="gauge-label">SCORE</div>
+      </div>
     </div>
   );
 }
