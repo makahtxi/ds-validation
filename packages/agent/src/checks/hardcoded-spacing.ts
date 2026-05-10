@@ -53,6 +53,7 @@ function collectViolations(
       | Record<string, unknown>
       | undefined;
     for (let i = 0; i < CORNER_RADIUS_KEYS.length; i++) {
+      if (radii[i] === 0) continue;
       totalSpacingProps++;
       if (!bvRadii?.[CORNER_RADIUS_KEYS[i]]) {
         violations.push({
