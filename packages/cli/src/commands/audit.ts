@@ -258,9 +258,11 @@ export function auditCommand(): Command {
               groupedByCheck.set(item.checkId, existing);
             }
 
-            console.log("\nSome components need classification for state checks:");
+            console.log("\nSome components need classification before checks can run:");
 
             const newDecisions: Record<string, ComponentClassification> = { ...savedDecisions };
+
+            let userDismissed = false;
 
             for (const [checkId, components] of groupedByCheck) {
               const check = registry.getById(checkId);
@@ -288,12 +290,20 @@ export function auditCommand(): Command {
                     classifications[compName] = {};
                   }
                   classifications[compName][checkId] = response.classification;
+                } else {
+                  console.warn("\nClassification prompt dismissed. Remaining components will be re-prompted on next run.");
+                  userDismissed = true;
+                  break;
                 }
               }
+
+              if (userDismissed) break;
             }
 
             saveClassifications(fileKey, newDecisions);
-            console.log("\nClassifications saved for this Figma file.");
+            if (!userDismissed) {
+              console.log("\nClassifications saved for this Figma file.");
+            }
           }
 
           const checkOverrides: Record<string, { enabled?: boolean; weight?: number }> = {};

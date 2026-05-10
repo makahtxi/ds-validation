@@ -3,7 +3,6 @@ export type ComponentClassification = "interactive" | "non-interactive" | "ambig
 export interface CheckComponentRules {
   interactive: string[];
   nonInteractive: string[];
-  ambiguous: string[];
 }
 
 export interface ClassificationDecision {

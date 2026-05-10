@@ -46,25 +46,11 @@ const DEFAULT_COMPONENT_RULES: CheckComponentRules = {
     "image",
     "illustration",
   ],
-  ambiguous: [
-    "card",
-    "modal",
-    "dialog",
-    "tooltip",
-    "popover",
-    "menu",
-    "alert",
-    "banner",
-    "chip",
-    "tag",
-    "accordion",
-    "list",
-    "table",
-    "navigation",
-    "sidebar",
-    "breadcrumb",
-  ],
 };
+
+// Patterns that are intentionally left ambiguous — these will prompt the user:
+// card, modal, dialog, tooltip, popover, menu, alert, banner, chip, tag,
+// accordion, list, table, navigation, sidebar, breadcrumb
 
 export const stateVariablesCheck: ConformanceCheck = {
   id: "state-variables",

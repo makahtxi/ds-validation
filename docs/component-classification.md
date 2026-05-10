@@ -134,13 +134,14 @@ export const myNewCheck: ConformanceCheck = {
   componentRules: {
     interactive: ["button", "input"],
     nonInteractive: ["icon", "text"],
-    ambiguous: ["card", "dialog"],
   },
   async run(context: CheckContext): Promise<CheckResult> {
     // ...
   },
 };
 ```
+
+Components that don't match any interactive or non-interactive pattern default to **ambiguous** and will prompt the user.
 
 Checks without `componentRules` run on all components (existing behavior).
 

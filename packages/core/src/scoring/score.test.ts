@@ -58,6 +58,45 @@ describe("computeComponentScore", () => {
     const score = computeComponentScore(results, weights);
     expect(score).toBe(73);
   });
+
+  it("excludes notApplicable results from score calculation", () => {
+    const results: Record<string, CheckResult> = {
+      "hardcoded-colors": {
+        checkId: "hardcoded-colors",
+        score: 80,
+        status: "partial",
+        violations: [],
+        summary: { template: "test", params: {} },
+      },
+      "state-variables": {
+        checkId: "state-variables",
+        score: 100,
+        status: "pass",
+        violations: [],
+        summary: { template: "check_not_applicable", params: {} },
+        notApplicable: true,
+      },
+    };
+    const weights = { "hardcoded-colors": 0.25, "state-variables": 0.15 };
+    const score = computeComponentScore(results, weights);
+    expect(score).toBe(80);
+  });
+
+  it("returns 0 when all results are notApplicable", () => {
+    const results: Record<string, CheckResult> = {
+      "state-variables": {
+        checkId: "state-variables",
+        score: 100,
+        status: "pass",
+        violations: [],
+        summary: { template: "check_not_applicable", params: {} },
+        notApplicable: true,
+      },
+    };
+    const weights = { "state-variables": 0.15 };
+    const score = computeComponentScore(results, weights);
+    expect(score).toBe(0);
+  });
 });
 
 describe("computeTotalScore", () => {

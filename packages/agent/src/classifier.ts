@@ -42,10 +42,6 @@ export function classifyComponent(
     return "non-interactive";
   }
 
-  if (rules.ambiguous.some((pattern) => tokens.includes(pattern.toLowerCase()))) {
-    return "ambiguous";
-  }
-
   return "ambiguous";
 }
 
