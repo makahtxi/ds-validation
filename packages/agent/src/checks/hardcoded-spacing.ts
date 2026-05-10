@@ -31,62 +31,64 @@ function collectViolations(
   let totalSpacingProps = 0;
   const nodePath = path ? `${path} > ${node.name}` : node.name;
 
-  for (const prop of SPACING_PROPERTIES) {
-    const value = node[prop];
-    if (value !== undefined && value !== 0) {
-      totalSpacingProps++;
-      const boundVar = node.boundVariables?.[prop];
-      if (!boundVar) {
-        violations.push({
-          nodePath,
-          property: prop,
-          rawValue: String(value),
-          expected: "A semantic spacing variable",
-        });
+  if (node.type !== "COMPONENT_SET") {
+    for (const prop of SPACING_PROPERTIES) {
+      const value = node[prop];
+      if (value !== undefined && value !== 0) {
+        totalSpacingProps++;
+        const boundVar = node.boundVariables?.[prop];
+        if (!boundVar) {
+          violations.push({
+            nodePath,
+            property: prop,
+            rawValue: String(value),
+            expected: "A semantic spacing variable",
+          });
+        }
       }
     }
-  }
 
-  const radii = node.rectangleCornerRadii;
-  if (radii && radii.some((r) => r > 0)) {
-    const bvRadii = node.boundVariables?.["rectangleCornerRadii"] as
-      | Record<string, unknown>
-      | undefined;
-    for (let i = 0; i < CORNER_RADIUS_KEYS.length; i++) {
-      if (radii[i] === 0) continue;
-      totalSpacingProps++;
-      if (!bvRadii?.[CORNER_RADIUS_KEYS[i]]) {
-        violations.push({
-          nodePath,
-          property: `rectangleCornerRadii.${CORNER_RADIUS_KEYS[i]}`,
-          rawValue: String(radii[i]),
-          expected: "A semantic spacing variable",
-        });
+    const radii = node.rectangleCornerRadii;
+    if (radii && radii.some((r) => r > 0)) {
+      const bvRadii = node.boundVariables?.["rectangleCornerRadii"] as
+        | Record<string, unknown>
+        | undefined;
+      for (let i = 0; i < CORNER_RADIUS_KEYS.length; i++) {
+        if (radii[i] === 0) continue;
+        totalSpacingProps++;
+        if (!bvRadii?.[CORNER_RADIUS_KEYS[i]]) {
+          violations.push({
+            nodePath,
+            property: `rectangleCornerRadii.${CORNER_RADIUS_KEYS[i]}`,
+            rawValue: String(radii[i]),
+            expected: "A semantic spacing variable",
+          });
+        }
       }
     }
-  }
 
-  if (!node.layoutMode || node.layoutMode === "NONE") {
-    if (node.x !== undefined && node.x !== 0) {
-      totalSpacingProps++;
-      if (!node.boundVariables?.["x"]) {
-        violations.push({
-          nodePath,
-          property: "x",
-          rawValue: String(node.x),
-          expected: "A semantic spacing variable",
-        });
+    if (!node.layoutMode || node.layoutMode === "NONE") {
+      if (node.x !== undefined && node.x !== 0) {
+        totalSpacingProps++;
+        if (!node.boundVariables?.["x"]) {
+          violations.push({
+            nodePath,
+            property: "x",
+            rawValue: String(node.x),
+            expected: "A semantic spacing variable",
+          });
+        }
       }
-    }
-    if (node.y !== undefined && node.y !== 0) {
-      totalSpacingProps++;
-      if (!node.boundVariables?.["y"]) {
-        violations.push({
-          nodePath,
-          property: "y",
-          rawValue: String(node.y),
-          expected: "A semantic spacing variable",
-        });
+      if (node.y !== undefined && node.y !== 0) {
+        totalSpacingProps++;
+        if (!node.boundVariables?.["y"]) {
+          violations.push({
+            nodePath,
+            property: "y",
+            rawValue: String(node.y),
+            expected: "A semantic spacing variable",
+          });
+        }
       }
     }
   }

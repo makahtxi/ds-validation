@@ -69,6 +69,28 @@ describe("hardcodedColorsCheck", () => {
     expect(result.violations).toHaveLength(1);
     expect(result.violations[0].nodePath).toContain("Icon");
   });
+
+  it("should skip COMPONENT_SET own properties but check children", async () => {
+    const context = makeContext({
+      id: "1",
+      name: "Button",
+      type: "COMPONENT_SET",
+      fills: [{ type: "SOLID", color: { r: 1, g: 0, b: 0, a: 1 } }],
+      children: [
+        {
+          id: "2",
+          name: "Variant/Default",
+          type: "COMPONENT",
+          fills: [{ type: "SOLID", color: { r: 0, g: 1, b: 0, a: 1 } }],
+          children: [],
+        },
+      ],
+    });
+
+    const result = await hardcodedColorsCheck.run(context);
+    expect(result.violations).toHaveLength(1);
+    expect(result.violations[0].nodePath).toContain("Variant/Default");
+  });
 });
 
 describe("hardcodedSpacingCheck", () => {
@@ -115,6 +137,28 @@ describe("hardcodedSpacingCheck", () => {
 
     const result = await hardcodedSpacingCheck.run(context);
     expect(result.violations).toHaveLength(0);
+  });
+
+  it("should skip COMPONENT_SET own spacing but check children", async () => {
+    const context = makeContext({
+      id: "1",
+      name: "Button",
+      type: "COMPONENT_SET",
+      paddingLeft: 16,
+      children: [
+        {
+          id: "2",
+          name: "Variant/Default",
+          type: "COMPONENT",
+          paddingLeft: 16,
+          children: [],
+        },
+      ],
+    });
+
+    const result = await hardcodedSpacingCheck.run(context);
+    expect(result.violations).toHaveLength(1);
+    expect(result.violations[0].nodePath).toContain("Variant/Default");
   });
 });
 
@@ -376,5 +420,51 @@ describe("noPrimitiveTokensCheck", () => {
 
     const result = await noPrimitiveTokensCheck.run(context);
     expect(result.violations).toHaveLength(0);
+  });
+
+  it("should skip COMPONENT_SET own boundVariables but check children", async () => {
+    const variables: Record<string, FigmaVariable> = {
+      "var-raw": {
+        id: "var-raw",
+        name: "color/red-500",
+        variableCollectionId: "col-1",
+        resolvedType: "COLOR",
+        valuesByMode: { "mode-1": { r: 0.93, g: 0.27, b: 0.27, a: 1 } },
+      },
+    };
+
+    const context: CheckContext = {
+      componentNode: {
+        id: "1",
+        name: "Button",
+        type: "COMPONENT_SET",
+        fills: [
+          {
+            type: "SOLID",
+            boundVariables: { color: { id: "var-raw", type: "VARIABLE" } },
+          },
+        ],
+        children: [
+          {
+            id: "2",
+            name: "Variant/Default",
+            type: "COMPONENT",
+            fills: [
+              {
+                type: "SOLID",
+                boundVariables: { color: { id: "var-raw", type: "VARIABLE" } },
+              },
+            ],
+            children: [],
+          } as FigmaNode,
+        ],
+      } as FigmaNode,
+      styles: {},
+      variables,
+    };
+
+    const result = await noPrimitiveTokensCheck.run(context);
+    expect(result.violations).toHaveLength(1);
+    expect(result.violations[0].nodePath).toContain("Variant/Default");
   });
 });
