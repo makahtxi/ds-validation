@@ -248,6 +248,17 @@ export function auditCommand(): Command {
 
           const classifications: Record<string, Record<string, ComponentClassification>> = {};
 
+          for (const [key, value] of Object.entries(savedDecisions)) {
+            const separatorIndex = key.indexOf(":");
+            if (separatorIndex === -1) continue;
+            const componentName = key.slice(0, separatorIndex);
+            const checkId = key.slice(separatorIndex + 1);
+            if (!classifications[componentName]) {
+              classifications[componentName] = {};
+            }
+            classifications[componentName][checkId] = value;
+          }
+
           if (ambiguous.length > 0) {
             const groupedByCheck = new Map<string, string[]>();
             for (const item of ambiguous) {
