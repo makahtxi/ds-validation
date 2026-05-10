@@ -29,58 +29,60 @@ function collectViolations(
     return 0;
   }
 
-  if (node.fills && node.fills.length > 0) {
-    for (let i = 0; i < node.fills.length; i++) {
-      const paint = node.fills[i] as FigmaPaint;
+  if (node.type !== "COMPONENT_SET") {
+    if (node.fills && node.fills.length > 0) {
+      for (let i = 0; i < node.fills.length; i++) {
+        const paint = node.fills[i] as FigmaPaint;
 
-      if (paint.visible === false) continue;
+        if (paint.visible === false) continue;
 
-      totalPaints++;
-      if (paint.type === "SOLID" || paint.type === "GRADIENT_LINEAR" || paint.type === "GRADIENT_RADIAL" || paint.type === "GRADIENT_ANGULAR" || paint.type === "GRADIENT_DIAMOND") {
-        const hasStyle = !!paint.styleId;
-        const hasVariable =
-          paint.boundVariables &&
-          Object.keys(paint.boundVariables).length > 0;
+        totalPaints++;
+        if (paint.type === "SOLID" || paint.type === "GRADIENT_LINEAR" || paint.type === "GRADIENT_RADIAL" || paint.type === "GRADIENT_ANGULAR" || paint.type === "GRADIENT_DIAMOND") {
+          const hasStyle = !!paint.styleId;
+          const hasVariable =
+            paint.boundVariables &&
+            Object.keys(paint.boundVariables).length > 0;
 
-        if (!hasStyle && !hasVariable) {
-          const rawValue = paint.color
-            ? rgbToHex(paint.color.r, paint.color.g, paint.color.b)
-            : paint.type;
-          violations.push({
-            nodePath: nodePath,
-            property: `fills[${i}]`,
-            rawValue,
-            expected: "A semantic color variable",
-          });
+          if (!hasStyle && !hasVariable) {
+            const rawValue = paint.color
+              ? rgbToHex(paint.color.r, paint.color.g, paint.color.b)
+              : paint.type;
+            violations.push({
+              nodePath: nodePath,
+              property: `fills[${i}]`,
+              rawValue,
+              expected: "A semantic color variable",
+            });
+          }
         }
       }
     }
-  }
 
-  if (node.strokes && node.strokes.length > 0) {
-    for (let i = 0; i < node.strokes.length; i++) {
-      const paint = node.strokes[i] as FigmaPaint;
+    if (node.strokes && node.strokes.length > 0) {
+      for (let i = 0; i < node.strokes.length; i++) {
+        const paint = node.strokes[i] as FigmaPaint;
 
-      if (paint.visible === false) continue;
-      if (isComponentBoundStroke(paint)) continue;
+        if (paint.visible === false) continue;
+        if (isComponentBoundStroke(paint)) continue;
 
-      totalPaints++;
-      if (paint.type === "SOLID" || paint.type === "GRADIENT_LINEAR" || paint.type === "GRADIENT_RADIAL" || paint.type === "GRADIENT_ANGULAR" || paint.type === "GRADIENT_DIAMOND") {
-        const hasStyle = !!paint.styleId;
-        const hasVariable =
-          paint.boundVariables &&
-          Object.keys(paint.boundVariables).length > 0;
+        totalPaints++;
+        if (paint.type === "SOLID" || paint.type === "GRADIENT_LINEAR" || paint.type === "GRADIENT_RADIAL" || paint.type === "GRADIENT_ANGULAR" || paint.type === "GRADIENT_DIAMOND") {
+          const hasStyle = !!paint.styleId;
+          const hasVariable =
+            paint.boundVariables &&
+            Object.keys(paint.boundVariables).length > 0;
 
-        if (!hasStyle && !hasVariable) {
-          const rawValue = paint.color
-            ? rgbToHex(paint.color.r, paint.color.g, paint.color.b)
-            : paint.type;
-          violations.push({
-            nodePath: nodePath,
-            property: `strokes[${i}]`,
-            rawValue,
-            expected: "A semantic color variable",
-          });
+          if (!hasStyle && !hasVariable) {
+            const rawValue = paint.color
+              ? rgbToHex(paint.color.r, paint.color.g, paint.color.b)
+              : paint.type;
+            violations.push({
+              nodePath: nodePath,
+              property: `strokes[${i}]`,
+              rawValue,
+              expected: "A semantic color variable",
+            });
+          }
         }
       }
     }

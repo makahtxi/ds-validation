@@ -24,47 +24,49 @@ function collectAllTokenRefs(
 ): void {
   const nodePath = path ? `${path} > ${node.name}` : node.name;
 
-  if (node.boundVariables) {
-    for (const [prop, bv] of Object.entries(node.boundVariables)) {
-      const boundVar = bv as FigmaBoundVariable;
-      refs.push({ nodePath, property: prop, varId: boundVar.id });
+  if (node.type !== "COMPONENT_SET") {
+    if (node.boundVariables) {
+      for (const [prop, bv] of Object.entries(node.boundVariables)) {
+        const boundVar = bv as FigmaBoundVariable;
+        refs.push({ nodePath, property: prop, varId: boundVar.id });
+      }
     }
-  }
 
-  if (node.fills) {
-    for (let i = 0; i < node.fills.length; i++) {
-      const paint = node.fills[i] as FigmaPaint;
-      if (paint.boundVariables) {
-        for (const [prop, bv] of Object.entries(paint.boundVariables)) {
-          const boundVar = bv as FigmaBoundVariable;
-          refs.push({
-            nodePath,
-            property: `fills[${i}].${prop}`,
-            varId: boundVar.id,
-          });
+    if (node.fills) {
+      for (let i = 0; i < node.fills.length; i++) {
+        const paint = node.fills[i] as FigmaPaint;
+        if (paint.boundVariables) {
+          for (const [prop, bv] of Object.entries(paint.boundVariables)) {
+            const boundVar = bv as FigmaBoundVariable;
+            refs.push({
+              nodePath,
+              property: `fills[${i}].${prop}`,
+              varId: boundVar.id,
+            });
+          }
         }
       }
     }
-  }
 
-  if (node.strokes) {
-    for (let i = 0; i < node.strokes.length; i++) {
-      const paint = node.strokes[i] as FigmaPaint;
-      if (paint.boundVariables) {
-        for (const [prop, bv] of Object.entries(paint.boundVariables)) {
-          const boundVar = bv as FigmaBoundVariable;
-          refs.push({
-            nodePath,
-            property: `strokes[${i}].${prop}`,
-            varId: boundVar.id,
-          });
+    if (node.strokes) {
+      for (let i = 0; i < node.strokes.length; i++) {
+        const paint = node.strokes[i] as FigmaPaint;
+        if (paint.boundVariables) {
+          for (const [prop, bv] of Object.entries(paint.boundVariables)) {
+            const boundVar = bv as FigmaBoundVariable;
+            refs.push({
+              nodePath,
+              property: `strokes[${i}].${prop}`,
+              varId: boundVar.id,
+            });
+          }
         }
       }
     }
-  }
 
-  if (node.styleId) {
-    refs.push({ nodePath, property: "styleId", varId: node.styleId });
+    if (node.styleId) {
+      refs.push({ nodePath, property: "styleId", varId: node.styleId });
+    }
   }
 
   for (const child of node.children ?? []) {
