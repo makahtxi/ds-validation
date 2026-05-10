@@ -15,6 +15,13 @@ const SPACING_PROPERTIES = [
   "itemSpacing",
 ] as const;
 
+const CORNER_RADIUS_KEYS = [
+  "RECTANGLE_TOP_LEFT_CORNER_RADIUS",
+  "RECTANGLE_TOP_RIGHT_CORNER_RADIUS",
+  "RECTANGLE_BOTTOM_LEFT_CORNER_RADIUS",
+  "RECTANGLE_BOTTOM_RIGHT_CORNER_RADIUS",
+] as const;
+
 function collectViolations(
   node: FigmaNode,
   path: string,
@@ -34,6 +41,25 @@ function collectViolations(
           nodePath,
           property: prop,
           rawValue: String(value),
+          expected: "A semantic spacing variable",
+        });
+      }
+    }
+  }
+
+  const radii = node.rectangleCornerRadii;
+  if (radii && radii.some((r) => r > 0)) {
+    const bvRadii = node.boundVariables?.["rectangleCornerRadii"] as
+      | Record<string, unknown>
+      | undefined;
+    for (let i = 0; i < CORNER_RADIUS_KEYS.length; i++) {
+      if (radii[i] === 0) continue;
+      totalSpacingProps++;
+      if (!bvRadii?.[CORNER_RADIUS_KEYS[i]]) {
+        violations.push({
+          nodePath,
+          property: `rectangleCornerRadii.${CORNER_RADIUS_KEYS[i]}`,
+          rawValue: String(radii[i]),
           expected: "A semantic spacing variable",
         });
       }

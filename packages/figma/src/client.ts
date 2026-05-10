@@ -36,6 +36,8 @@ interface FigmaRestNode {
   paddingRight?: number;
   paddingTop?: number;
   paddingBottom?: number;
+  cornerRadius?: number;
+  rectangleCornerRadii?: number[];
   itemSpacing?: number;
   styleId?: string;
   boundVariables?: Record<string, { id: string; type: string }>;
@@ -96,6 +98,8 @@ function mapNode(raw: FigmaRestNode): FigmaNode {
     paddingRight: raw.paddingRight,
     paddingTop: raw.paddingTop,
     paddingBottom: raw.paddingBottom,
+    cornerRadius: raw.cornerRadius,
+    rectangleCornerRadii: raw.rectangleCornerRadii,
     itemSpacing: raw.itemSpacing,
     styleId: raw.styleId,
     boundVariables: raw.boundVariables as FigmaNode["boundVariables"],
