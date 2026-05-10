@@ -27,6 +27,14 @@ export type {
   ComponentAuditResult,
 } from "./types/checks.js";
 
+export type {
+  ComponentClassification,
+  CheckComponentRules,
+  ClassificationDecision,
+  ClassificationStore,
+  ClassificationOverride,
+} from "./types/classification.js";
+
 export type { DSValidationConfig } from "./types/config.js";
 
 export {

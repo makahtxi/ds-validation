@@ -12,8 +12,10 @@ import {
   type FigmaNode,
   type FigmaVariable,
   type AuditResult,
+  type ComponentClassification,
 } from "@ds-validation/core";
 import { parseFileKey } from "../utils.js";
+import { collectAmbiguousComponents, loadClassifications, saveClassifications } from "@ds-validation/agent";
 
 export function auditCommand(): Command {
   const cmd = new Command("audit");
@@ -219,6 +221,67 @@ export function auditCommand(): Command {
 
           console.log(`\nAuditing ${componentNodes.size} components...`);
 
+          const savedDecisions = loadClassifications(fileKey);
+          const componentNames = Array.from(componentNodes.keys());
+          const checksWithRules = registry.getAll().filter((c) => c.componentRules);
+
+          const ambiguous = collectAmbiguousComponents(
+            componentNames,
+            checksWithRules,
+            savedDecisions,
+          );
+
+          const classifications: Record<string, Record<string, ComponentClassification>> = {};
+
+          if (ambiguous.length > 0) {
+            const groupedByCheck = new Map<string, string[]>();
+            for (const item of ambiguous) {
+              const existing = groupedByCheck.get(item.checkId) ?? [];
+              if (!existing.includes(item.componentName)) {
+                existing.push(item.componentName);
+              }
+              groupedByCheck.set(item.checkId, existing);
+            }
+
+            console.log("\nSome components need classification for state checks:");
+
+            const newDecisions: Record<string, ComponentClassification> = { ...savedDecisions };
+
+            for (const [checkId, components] of groupedByCheck) {
+              const check = registry.getById(checkId);
+              if (!check) continue;
+
+              console.log(`\n${check.name}:`);
+              for (const compName of components) {
+                const decisionKey = `${compName}:${checkId}`;
+                if (savedDecisions[decisionKey]) continue;
+
+                const response = await prompts({
+                  type: "select",
+                  name: "classification",
+                  message: `How should "${compName}" be classified?`,
+                  choices: [
+                    { title: "Interactive (run state check)", value: "interactive" },
+                    { title: "Non-interactive (skip state check)", value: "non-interactive" },
+                  ],
+                  initial: 0,
+                });
+
+                if (response.classification) {
+                  newDecisions[decisionKey] = response.classification;
+
+                  if (!classifications[compName]) {
+                    classifications[compName] = {};
+                  }
+                  classifications[compName][checkId] = response.classification;
+                }
+              }
+            }
+
+            saveClassifications(fileKey, newDecisions);
+            console.log("\nClassifications saved for this Figma file.");
+          }
+
           const checkOverrides: Record<string, { enabled?: boolean; weight?: number }> = {};
           if (!variablesAvailable) {
             checkOverrides["no-primitive-tokens"] = { enabled: false };
@@ -233,6 +296,7 @@ export function auditCommand(): Command {
             styles,
             variables,
             checkOverrides,
+            classifications,
           });
 
           const outputDir = options.output;

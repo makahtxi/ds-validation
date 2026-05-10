@@ -9,9 +9,11 @@ import type {
   FigmaNode,
   FigmaStyle,
   FigmaVariable,
+  ComponentClassification,
 } from "@ds-validation/core";
 import { computeComponentScore, computeTotalScore, buildSummary, sanitizeComponentName } from "@ds-validation/core";
 import { registry } from "./checks/registry.js";
+import { classifyComponent } from "./classifier.js";
 
 export interface AuditFileResult {
   audit: AuditResult;
@@ -28,6 +30,21 @@ export interface AuditFileOptions {
   variables: Record<string, FigmaVariable>;
   checkWeights?: Record<string, number>;
   checkOverrides?: Record<string, { enabled?: boolean; weight?: number }>;
+  classifications?: Record<string, Record<string, ComponentClassification>>;
+}
+
+function createNAResult(checkId: string, componentName: string): CheckResult {
+  return {
+    checkId,
+    score: 100,
+    status: "pass",
+    violations: [],
+    summary: {
+      template: "check_not_applicable",
+      params: { checkId, componentName },
+    },
+    notApplicable: true,
+  };
 }
 
 export async function auditComponent(
@@ -38,6 +55,7 @@ export async function auditComponent(
   variables: Record<string, FigmaVariable>,
   checkWeights?: Record<string, number>,
   checkOverrides?: Record<string, { enabled?: boolean; weight?: number }>,
+  classifications?: Record<string, ComponentClassification>,
 ): Promise<ComponentAuditResult> {
   const context: CheckContext = {
     componentNode,
@@ -58,23 +76,55 @@ export async function auditComponent(
     const weight = checkWeights?.[check.id] ?? check.weight;
     weights[check.id] = weight;
 
-    try {
-      checkResults[check.id] = await check.run(context);
-    } catch (error) {
-      checkResults[check.id] = {
-        checkId: check.id,
-        score: 0,
-        status: "fail",
-        violations: [
-          {
-            nodePath: componentName,
-            property: "check_error",
-            rawValue: error instanceof Error ? error.message : String(error),
-            expected: "Check should complete without errors",
-          },
-        ],
-        summary: { template: "check_error", params: { checkId: check.id } },
-      };
+    if (classifications?.[check.id] === "non-interactive") {
+      checkResults[check.id] = createNAResult(check.id, componentName);
+      continue;
+    }
+
+    if (classifications?.[check.id] === "interactive" || !check.componentRules) {
+      try {
+        checkResults[check.id] = await check.run(context);
+      } catch (error) {
+        checkResults[check.id] = {
+          checkId: check.id,
+          score: 0,
+          status: "fail",
+          violations: [
+            {
+              nodePath: componentName,
+              property: "check_error",
+              rawValue: error instanceof Error ? error.message : String(error),
+              expected: "Check should complete without errors",
+            },
+          ],
+          summary: { template: "check_error", params: { checkId: check.id } },
+        };
+      }
+      continue;
+    }
+
+    const classification = classifications?.[check.id];
+    if (classification === "interactive") {
+      try {
+        checkResults[check.id] = await check.run(context);
+      } catch (error) {
+        checkResults[check.id] = {
+          checkId: check.id,
+          score: 0,
+          status: "fail",
+          violations: [
+            {
+              nodePath: componentName,
+              property: "check_error",
+              rawValue: error instanceof Error ? error.message : String(error),
+              expected: "Check should complete without errors",
+            },
+          ],
+          summary: { template: "check_error", params: { checkId: check.id } },
+        };
+      }
+    } else {
+      checkResults[check.id] = createNAResult(check.id, componentName);
     }
   }
 
@@ -101,6 +151,7 @@ export async function auditFile(
     variables,
     checkWeights,
     checkOverrides,
+    classifications,
   } = options;
 
   const checksToRun = registry.getAll().filter((check) => {
@@ -114,6 +165,7 @@ export async function auditFile(
 
   for (const [name, node] of componentNodes) {
     const pageName = componentPageMap.get(name) ?? "Unknown";
+    const componentClassifications = classifications?.[name];
     const result = await auditComponent(
       name,
       node,
@@ -122,6 +174,7 @@ export async function auditFile(
       variables,
       checkWeights,
       checkOverrides,
+      componentClassifications,
     );
     componentResults.push(result);
     componentSummaries.push({
