@@ -4,31 +4,41 @@ import type {
   ClassificationOverride,
 } from "@ds-validation/core";
 
+function tokenize(componentName: string): string[] {
+  return componentName
+    .replace(/([a-z])([A-Z])/g, "$1 $2")
+    .replace(/[-_/]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLowerCase()
+    .split(" ");
+}
+
 export function classifyComponent(
   componentName: string,
   rules: CheckComponentRules,
-  overrides?: Record<string, ClassificationOverride>,
+  override?: ClassificationOverride,
 ): ComponentClassification {
-  const normalizedName = componentName.toLowerCase();
+  const tokens = tokenize(componentName);
 
-  for (const [checkId, override] of Object.entries(overrides ?? {})) {
-    if (override.interactive?.some((pattern) => normalizedName.includes(pattern.toLowerCase()))) {
+  if (override) {
+    if (override.interactive?.some((pattern) => tokens.includes(pattern.toLowerCase()))) {
       return "interactive";
     }
-    if (override.nonInteractive?.some((pattern) => normalizedName.includes(pattern.toLowerCase()))) {
+    if (override.nonInteractive?.some((pattern) => tokens.includes(pattern.toLowerCase()))) {
       return "non-interactive";
     }
   }
 
-  if (rules.interactive.some((pattern) => normalizedName.includes(pattern.toLowerCase()))) {
+  if (rules.interactive.some((pattern) => tokens.includes(pattern.toLowerCase()))) {
     return "interactive";
   }
 
-  if (rules.nonInteractive.some((pattern) => normalizedName.includes(pattern.toLowerCase()))) {
+  if (rules.nonInteractive.some((pattern) => tokens.includes(pattern.toLowerCase()))) {
     return "non-interactive";
   }
 
-  if (rules.ambiguous.some((pattern) => normalizedName.includes(pattern.toLowerCase()))) {
+  if (rules.ambiguous.some((pattern) => tokens.includes(pattern.toLowerCase()))) {
     return "ambiguous";
   }
 
@@ -56,7 +66,7 @@ export function collectAmbiguousComponents(
       const decisionKey = `${componentName}:${check.id}`;
       if (savedDecisions[decisionKey]) continue;
 
-      const classification = classifyComponent(componentName, check.componentRules, overrides);
+      const classification = classifyComponent(componentName, check.componentRules, overrides?.[check.id]);
       if (classification === "ambiguous") {
         ambiguous.push({
           componentName,

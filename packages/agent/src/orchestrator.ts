@@ -13,7 +13,6 @@ import type {
 } from "@ds-validation/core";
 import { computeComponentScore, computeTotalScore, buildSummary, sanitizeComponentName } from "@ds-validation/core";
 import { registry } from "./checks/registry.js";
-import { classifyComponent } from "./classifier.js";
 
 export interface AuditFileResult {
   audit: AuditResult;
@@ -81,50 +80,23 @@ export async function auditComponent(
       continue;
     }
 
-    if (classifications?.[check.id] === "interactive" || !check.componentRules) {
-      try {
-        checkResults[check.id] = await check.run(context);
-      } catch (error) {
-        checkResults[check.id] = {
-          checkId: check.id,
-          score: 0,
-          status: "fail",
-          violations: [
-            {
-              nodePath: componentName,
-              property: "check_error",
-              rawValue: error instanceof Error ? error.message : String(error),
-              expected: "Check should complete without errors",
-            },
-          ],
-          summary: { template: "check_error", params: { checkId: check.id } },
-        };
-      }
-      continue;
-    }
-
-    const classification = classifications?.[check.id];
-    if (classification === "interactive") {
-      try {
-        checkResults[check.id] = await check.run(context);
-      } catch (error) {
-        checkResults[check.id] = {
-          checkId: check.id,
-          score: 0,
-          status: "fail",
-          violations: [
-            {
-              nodePath: componentName,
-              property: "check_error",
-              rawValue: error instanceof Error ? error.message : String(error),
-              expected: "Check should complete without errors",
-            },
-          ],
-          summary: { template: "check_error", params: { checkId: check.id } },
-        };
-      }
-    } else {
-      checkResults[check.id] = createNAResult(check.id, componentName);
+    try {
+      checkResults[check.id] = await check.run(context);
+    } catch (error) {
+      checkResults[check.id] = {
+        checkId: check.id,
+        score: 0,
+        status: "fail",
+        violations: [
+          {
+            nodePath: componentName,
+            property: "check_error",
+            rawValue: error instanceof Error ? error.message : String(error),
+            expected: "Check should complete without errors",
+          },
+        ],
+        summary: { template: "check_error", params: { checkId: check.id } },
+      };
     }
   }
 

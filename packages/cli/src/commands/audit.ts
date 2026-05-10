@@ -13,9 +13,11 @@ import {
   type FigmaVariable,
   type AuditResult,
   type ComponentClassification,
+  type ClassificationOverride,
 } from "@ds-validation/core";
 import { parseFileKey } from "../utils.js";
 import { collectAmbiguousComponents, loadClassifications, saveClassifications } from "@ds-validation/agent";
+import { loadConfig } from "../config.js";
 
 export function auditCommand(): Command {
   const cmd = new Command("audit");
@@ -49,6 +51,9 @@ export function auditCommand(): Command {
           if (options.debug) {
             process.env.DS_VALIDATION_DEBUG = "1";
           }
+
+          const config = await loadConfig();
+
           const fileKey = parseFileKey(figmaUrl);
           if (!fileKey) {
             console.error(
@@ -225,10 +230,20 @@ export function auditCommand(): Command {
           const componentNames = Array.from(componentNodes.keys());
           const checksWithRules = registry.getAll().filter((c) => c.componentRules);
 
+          const classificationOverrides: Record<string, ClassificationOverride> = {};
+          if (config.checks) {
+            for (const [checkId, checkConfig] of Object.entries(config.checks)) {
+              if (checkConfig.rules) {
+                classificationOverrides[checkId] = checkConfig.rules;
+              }
+            }
+          }
+
           const ambiguous = collectAmbiguousComponents(
             componentNames,
             checksWithRules,
             savedDecisions,
+            classificationOverrides,
           );
 
           const classifications: Record<string, Record<string, ComponentClassification>> = {};
