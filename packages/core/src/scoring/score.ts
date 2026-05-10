@@ -12,7 +12,9 @@ export function computeComponentScore(
   checkResults: Record<string, CheckResult>,
   weights: Record<string, number>,
 ): number {
-  const entries = Object.entries(checkResults);
+  const entries = Object.entries(checkResults).filter(
+    ([, result]) => !result.notApplicable,
+  );
   if (entries.length === 0) return 0;
 
   let weightedSum = 0;

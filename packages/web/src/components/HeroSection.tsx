@@ -33,7 +33,7 @@ export function HeroSection({ audit, aggregates }: HeroSectionProps) {
   return (
     <div className="hero">
       <div className="hero-card">
-        <div className="hero-eyebrow">System Health &middot; {audit.meta.figmaFileName}</div>
+        <div className="hero-eyebrow">{audit.meta.figmaFileName} System Health</div>
         <div className="hero-main">
           <div>
             <div className="hero-score">

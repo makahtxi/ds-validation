@@ -4,11 +4,13 @@ import type {
   FigmaVariable,
   FigmaBoundVariable,
 } from "./figma.js";
+import type { CheckComponentRules } from "./classification.js";
 
 export interface ConformanceCheck {
   id: string;
   name: string;
   weight: number;
+  componentRules?: CheckComponentRules;
   run(context: CheckContext): Promise<CheckResult>;
 }
 
@@ -24,6 +26,7 @@ export interface CheckResult {
   status: "pass" | "fail" | "partial";
   violations: Violation[];
   summary: SummaryEntry;
+  notApplicable?: boolean;
 }
 
 export interface Violation {

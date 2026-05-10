@@ -4,15 +4,59 @@ import type {
   CheckResult,
   Violation,
   FigmaComponentPropertyDefinition,
+  CheckComponentRules,
 } from "@ds-validation/core";
 import { determineStatus, buildSummary } from "@ds-validation/core";
 
 const REQUIRED_STATES = ["Default", "Hover", "Selected", "Disabled", "Focused"] as const;
 
+const DEFAULT_COMPONENT_RULES: CheckComponentRules = {
+  interactive: [
+    "button",
+    "input",
+    "select",
+    "checkbox",
+    "toggle",
+    "link",
+    "tab",
+    "dropdown",
+    "slider",
+    "switch",
+    "radio",
+    "search",
+    "textarea",
+    "combobox",
+    "autocomplete",
+    "stepper",
+    "pagination",
+  ],
+  nonInteractive: [
+    "icon",
+    "text",
+    "label",
+    "divider",
+    "avatar",
+    "badge",
+    "logo",
+    "heading",
+    "paragraph",
+    "caption",
+    "spacer",
+    "separator",
+    "image",
+    "illustration",
+  ],
+};
+
+// Patterns that are intentionally left ambiguous — these will prompt the user:
+// card, modal, dialog, tooltip, popover, menu, alert, banner, chip, tag,
+// accordion, list, table, navigation, sidebar, breadcrumb
+
 export const stateVariablesCheck: ConformanceCheck = {
   id: "state-variables",
   name: "State Variables Available",
   weight: 0.15,
+  componentRules: DEFAULT_COMPONENT_RULES,
 
   async run(context: CheckContext): Promise<CheckResult> {
     const node = context.componentNode;

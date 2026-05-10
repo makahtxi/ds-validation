@@ -4,7 +4,7 @@ export interface DSValidationConfig {
     accessToken?: string;
     variableSource?: "rest-api" | "mcp" | "skip";
   };
-  checks?: Record<string, { weight?: number; enabled?: boolean }>;
+  checks?: Record<string, { weight?: number; enabled?: boolean; rules?: { interactive?: string[]; nonInteractive?: string[] } }>;
   ai?: {
     model?: string;
     apiKey?: string;

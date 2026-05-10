@@ -148,7 +148,7 @@ button { font: inherit; cursor: pointer; border: 0; background: none; color: inh
 .hero-eyebrow {
   text-transform: uppercase;
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 0.1em;
   color: var(--text-faint);
   margin-bottom: 8px;
@@ -198,7 +198,7 @@ button { font: inherit; cursor: pointer; border: 0; background: none; color: inh
   grid-template-rows: repeat(3, auto);
   gap: 14px;
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .hero-stats .row {
@@ -208,7 +208,7 @@ button { font: inherit; cursor: pointer; border: 0; background: none; color: inh
 }
 
 .hero-stats .row:last-child { border-bottom: 0; padding-bottom: 0; }
-.hero-stats .k { color: var(--text-muted); text-transform: uppercase; font-size: 11px; letter-spacing: 0.06em; }
+.hero-stats .k { color: var(--text-muted); text-transform: uppercase; font-size: 12px; letter-spacing: 0.06em; }
 .hero-stats .v { color: var(--text); font-size: 22px; font-weight: 500; letter-spacing: -0.02em; }
 .hero-stats .v small { font-size: 12px; color: var(--text-faint); margin-left: 4px; font-weight: 400; }
 
