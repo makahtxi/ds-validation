@@ -8,6 +8,8 @@ export interface FigmaNode {
   paddingRight?: number;
   paddingTop?: number;
   paddingBottom?: number;
+  cornerRadius?: number;
+  rectangleCornerRadii?: number[];
   itemSpacing?: number;
   styleId?: string;
   boundVariables?: Record<string, FigmaBoundVariable>;
