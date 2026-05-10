@@ -1,8 +1,9 @@
 import fs from "fs";
 import path from "path";
+import jiti from "jiti";
 import type { DSValidationConfig } from "@ds-validation/core";
 
-export async function loadConfig(): Promise<DSValidationConfig> {
+export function loadConfig(): DSValidationConfig {
   const configPath = path.resolve(process.cwd(), "ds-validation.config.ts");
 
   if (!fs.existsSync(configPath)) {
@@ -10,17 +11,9 @@ export async function loadConfig(): Promise<DSValidationConfig> {
   }
 
   try {
-    const module = await import(configPath);
-    if (module.default) {
-      return module.default as DSValidationConfig;
-    }
-    if (typeof module === "object" && !Array.isArray(module)) {
-      const keys = Object.keys(module);
-      if (keys.length > 0) {
-        return module as unknown as DSValidationConfig;
-      }
-    }
-    return {};
+    const loadModule = jiti(process.cwd(), { interopDefault: true });
+    const config = loadModule(configPath) as DSValidationConfig;
+    return config ?? {};
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     console.warn(`Warning: Failed to load ds-validation.config.ts: ${msg}`);

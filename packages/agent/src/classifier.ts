@@ -4,6 +4,10 @@ import type {
   ClassificationOverride,
 } from "@ds-validation/core";
 
+// Splits component names into tokens for exact word matching.
+// e.g. "PrimaryButton" → ["primary", "button"], "dialog-modal" → ["dialog", "modal"].
+// Patterns in componentRules are matched against individual tokens (not substring),
+// so "button" matches "Primary Button" but not "Buttons".
 function tokenize(componentName: string): string[] {
   return componentName
     .replace(/([a-z])([A-Z])/g, "$1 $2")

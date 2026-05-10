@@ -33,10 +33,11 @@ Checks can declare default classification rules via the `componentRules` propert
 
 ### Matching Strategy
 
-Component names are matched using **case-insensitive substring matching**. For example:
-- `"Primary Button"` matches `"button"` → interactive
-- `"Heading Large"` matches `"heading"` → non-interactive
-- `"Dialog Modal"` matches `"dialog"` → ambiguous (prompts user)
+Component names are split into tokens (by camelCase, hyphens, underscores, and spaces) and matched using **case-insensitive exact token matching**. For example:
+- `"Primary Button"` → `["primary", "button"]` matches `"button"` → interactive
+- `"Heading Large"` → `["heading", "large"]` matches `"heading"` → non-interactive
+- `"Dialog-Modal"` → `["dialog", "modal"]` matches `"dialog"` → ambiguous (prompts user)
+- `"Buttons"` → `["buttons"]` does NOT match pattern `"button"` (exact token, not substring)
 
 If a component doesn't match any rule in any category, it defaults to **ambiguous**.
 
@@ -159,7 +160,7 @@ Checks without `componentRules` run on all components (existing behavior).
 
 ### Design Decisions
 
-1. **Substring matching over exact matching**: Reduces configuration burden. `"Primary Button"` automatically matches `"button"` without needing explicit config.
+1. **Exact token matching over substring matching**: Component names are tokenized by splitting on camelCase, hyphens, underscores, and spaces. Patterns are matched against individual tokens. This prevents false positives like `"TextField"` being misclassified as non-interactive because it contains `"text"`. A pattern like `"button"` will match `"Primary Button"` but not `"Buttons"`.
 
 2. **Per-check classification**: The same component can be interactive for one check and non-interactive for another. This allows fine-grained control as new checks are added.
 

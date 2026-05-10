@@ -28,6 +28,8 @@ export const SUMMARY_TEMPLATES: Record<
     `Audited ${params.componentCount} component(s), score: ${params.totalScore}/100. Skipped: ${params.skippedChecks}`,
   check_error: (params) =>
     `Check "${params.checkId}" encountered an error`,
+  check_not_applicable: (params) =>
+    `Check "${params.checkId}" does not apply to component "${params.componentName}"`,
 };
 
 export function buildSummary(

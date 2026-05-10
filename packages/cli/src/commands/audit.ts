@@ -52,7 +52,7 @@ export function auditCommand(): Command {
             process.env.DS_VALIDATION_DEBUG = "1";
           }
 
-          const config = await loadConfig();
+          const config = loadConfig();
 
           const fileKey = parseFileKey(figmaUrl);
           if (!fileKey) {
@@ -269,7 +269,6 @@ export function auditCommand(): Command {
               console.log(`\n${check.name}:`);
               for (const compName of components) {
                 const decisionKey = `${compName}:${checkId}`;
-                if (savedDecisions[decisionKey]) continue;
 
                 const response = await prompts({
                   type: "select",
