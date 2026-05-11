@@ -9,8 +9,9 @@ const config: DSValidationConfig = {
     "hardcoded-colors": { weight: 0.25, enabled: true },
     "hardcoded-spacing": { weight: 0.15, enabled: true },
     "hardcoded-text-styles": { weight: 0.2, enabled: true },
-    "no-primitive-tokens": { weight: 0.25, enabled: true },
+    "no-primitive-tokens": { weight: 0.05, enabled: true },
     "state-variables": { weight: 0.15, enabled: true },
+    "accessibility-contrast": { weight: 0.2, enabled: true },
   },
   ai: {
     // model: "gpt-4o",

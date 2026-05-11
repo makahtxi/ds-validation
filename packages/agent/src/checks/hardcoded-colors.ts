@@ -6,13 +6,13 @@ import type {
   FigmaNode,
   FigmaPaint,
 } from "@ds-validation/core";
-import { computeCheckScore, determineStatus, buildSummary } from "@ds-validation/core";
+import { computeCheckScore, determineStatus, buildSummary, colorToHex } from "@ds-validation/core";
 
 const COMPONENT_BOUND_COLOR = "#9747ff";
 
 function isComponentBoundStroke(paint: FigmaPaint): boolean {
   if (paint.type !== "SOLID" || !paint.color) return false;
-  const hex = rgbToHex(paint.color.r, paint.color.g, paint.color.b);
+  const hex = colorToHex(paint.color);
   return hex.toLowerCase() === COMPONENT_BOUND_COLOR;
 }
 
@@ -45,7 +45,7 @@ function collectViolations(
 
           if (!hasStyle && !hasVariable) {
             const rawValue = paint.color
-              ? rgbToHex(paint.color.r, paint.color.g, paint.color.b)
+              ? colorToHex(paint.color)
               : paint.type;
             violations.push({
               nodePath: nodePath,
@@ -74,7 +74,7 @@ function collectViolations(
 
           if (!hasStyle && !hasVariable) {
             const rawValue = paint.color
-              ? rgbToHex(paint.color.r, paint.color.g, paint.color.b)
+              ? colorToHex(paint.color)
               : paint.type;
             violations.push({
               nodePath: nodePath,
@@ -93,14 +93,6 @@ function collectViolations(
   }
 
   return totalPaints;
-}
-
-function rgbToHex(r: number, g: number, b: number): string {
-  const toHex = (v: number) => {
-    const hex = Math.round(v * 255).toString(16);
-    return hex.length === 1 ? `0${hex}` : hex;
-  };
-  return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 }
 
 export const hardcodedColorsCheck: ConformanceCheck = {
