@@ -92,31 +92,39 @@ describe("collectAmbiguousComponents", () => {
     { id: "no-rules", name: "No Rules" },
   ];
 
-  it("returns empty array when no ambiguous components exist", () => {
+  it("returns empty array and auto-classified when no ambiguous components exist", () => {
     const result = collectAmbiguousComponents(["Button", "Icon"], checks, {});
-    expect(result).toEqual([]);
+    expect(result.ambiguous).toEqual([]);
+    expect(result.autoClassified["Button:state-variables"]).toBe("interactive");
+    expect(result.autoClassified["Icon:state-variables"]).toBe("non-interactive");
+    expect(result.autoClassified["Button:another-check"]).toBe("interactive");
+    expect(result.autoClassified["Icon:another-check"]).toBe("non-interactive");
   });
 
   it("collects components that are ambiguous for any check", () => {
     const result = collectAmbiguousComponents(["Card", "Button"], checks, {});
-    expect(result).toHaveLength(2);
-    expect(result.map((r) => r.componentName)).toEqual(["Card", "Card"]);
-    expect(result.map((r) => r.checkId)).toEqual(["state-variables", "another-check"]);
+    expect(result.ambiguous).toHaveLength(2);
+    expect(result.ambiguous.map((r) => r.componentName)).toEqual(["Card", "Card"]);
+    expect(result.ambiguous.map((r) => r.checkId)).toEqual(["state-variables", "another-check"]);
+    expect(result.autoClassified["Button:state-variables"]).toBe("interactive");
   });
 
   it("skips checks without componentRules", () => {
     const result = collectAmbiguousComponents(["Card"], [{ id: "no-rules", name: "No Rules" }], {});
-    expect(result).toEqual([]);
+    expect(result.ambiguous).toEqual([]);
+    expect(result.autoClassified).toEqual({});
   });
 
   it("skips components with saved decisions", () => {
     const savedDecisions = { "Card:state-variables": "interactive" as const };
     const result = collectAmbiguousComponents(["Card", "Button"], checks, savedDecisions);
-    expect(result).toHaveLength(1);
-    expect(result[0]).toEqual({
+    expect(result.ambiguous).toHaveLength(1);
+    expect(result.ambiguous[0]).toEqual({
       componentName: "Card",
       checkId: "another-check",
       checkName: "Another Check",
     });
+    expect(result.autoClassified["Button:state-variables"]).toBe("interactive");
+    expect(result.autoClassified["Button:another-check"]).toBe("interactive");
   });
 });
