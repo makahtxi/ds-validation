@@ -51,13 +51,19 @@ export interface AmbiguousComponent {
   checkName: string;
 }
 
+export interface ClassificationResults {
+  ambiguous: AmbiguousComponent[];
+  autoClassified: Record<string, ComponentClassification>;
+}
+
 export function collectAmbiguousComponents(
   componentNames: string[],
   checks: Array<{ id: string; name: string; componentRules?: CheckComponentRules }>,
   savedDecisions: Record<string, ComponentClassification>,
   overrides?: Record<string, ClassificationOverride>,
-): AmbiguousComponent[] {
+): ClassificationResults {
   const ambiguous: AmbiguousComponent[] = [];
+  const autoClassified: Record<string, ComponentClassification> = {};
 
   for (const componentName of componentNames) {
     for (const check of checks) {
@@ -73,9 +79,11 @@ export function collectAmbiguousComponents(
           checkId: check.id,
           checkName: check.name,
         });
+      } else {
+        autoClassified[decisionKey] = classification;
       }
     }
   }
 
-  return ambiguous;
+  return { ambiguous, autoClassified };
 }

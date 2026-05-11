@@ -239,7 +239,7 @@ export function auditCommand(): Command {
             }
           }
 
-          const ambiguous = collectAmbiguousComponents(
+          const { ambiguous, autoClassified } = collectAmbiguousComponents(
             componentNames,
             checksWithRules,
             savedDecisions,
@@ -257,6 +257,17 @@ export function auditCommand(): Command {
               classifications[componentName] = {};
             }
             classifications[componentName][checkId] = value;
+          }
+
+          for (const [key, classification] of Object.entries(autoClassified)) {
+            const separatorIndex = key.indexOf(":");
+            if (separatorIndex === -1) continue;
+            const componentName = key.slice(0, separatorIndex);
+            const checkId = key.slice(separatorIndex + 1);
+            if (!classifications[componentName]) {
+              classifications[componentName] = {};
+            }
+            classifications[componentName][checkId] = classification;
           }
 
           if (ambiguous.length > 0) {
