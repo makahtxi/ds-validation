@@ -4,9 +4,11 @@ import { hardcodedSpacingCheck } from "./checks/hardcoded-spacing.js";
 import { hardcodedTextStylesCheck } from "./checks/hardcoded-text-styles.js";
 import { noPrimitiveTokensCheck } from "./checks/no-primitive-tokens.js";
 import { stateVariablesCheck } from "./checks/state-variables.js";
+import { accessibilityContrastCheck } from "./checks/accessibility-contrast.js";
 
 registry.register(hardcodedColorsCheck);
 registry.register(hardcodedSpacingCheck);
 registry.register(hardcodedTextStylesCheck);
 registry.register(noPrimitiveTokensCheck);
 registry.register(stateVariablesCheck);
+registry.register(accessibilityContrastCheck);

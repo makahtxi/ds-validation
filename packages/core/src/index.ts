@@ -44,6 +44,15 @@ export {
   determineStatus,
 } from "./scoring/score.js";
 
+export {
+  linearize,
+  relativeLuminance,
+  contrastRatio,
+  blendColor,
+  colorToHex,
+  getSolidFillColor,
+} from "./color/contrast.js";
+
 export { buildSummary, renderSummary, SUMMARY_TEMPLATES } from "./templates/templates.js";
 
 export { writeAuditResult, loadAuditResult, writeComponentResult, sanitizeComponentName } from "./output/writer.js";

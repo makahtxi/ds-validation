@@ -9,7 +9,7 @@ import type {
   FigmaVariable,
   FigmaVariableValue,
 } from "@ds-validation/core";
-import { computeCheckScore, determineStatus, buildSummary } from "@ds-validation/core";
+import { computeCheckScore, determineStatus, buildSummary, colorToHex } from "@ds-validation/core";
 
 interface TokenRef {
   nodePath: string;
@@ -128,8 +128,7 @@ function getPrimitiveValueDisplay(variable: FigmaVariable): string {
   if (typeof value === "string") return `"${value}"`;
   if (typeof value === "boolean") return value.toString();
   if (typeof value === "object" && value !== null && "r" in value) {
-    const color = value as { r: number; g: number; b: number; a: number };
-    return `#${Math.round(color.r * 255).toString(16).padStart(2, "0")}${Math.round(color.g * 255).toString(16).padStart(2, "0")}${Math.round(color.b * 255).toString(16).padStart(2, "0")}`;
+    return colorToHex(value as { r: number; g: number; b: number; a: number });
   }
   return "unknown value";
 }
