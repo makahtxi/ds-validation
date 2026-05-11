@@ -48,6 +48,3 @@ export function getSolidFillColor(paint: FigmaPaint): FigmaColor | null {
   return paint.color;
 }
 
-export function isGrayScale(color: FigmaColor): boolean {
-  return color.r === color.g && color.g === color.b;
-}

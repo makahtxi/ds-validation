@@ -51,7 +51,6 @@ export {
   blendColor,
   colorToHex,
   getSolidFillColor,
-  isGrayScale,
 } from "./color/contrast.js";
 
 export { buildSummary, renderSummary, SUMMARY_TEMPLATES } from "./templates/templates.js";

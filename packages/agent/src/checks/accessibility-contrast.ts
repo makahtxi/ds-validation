@@ -109,7 +109,7 @@ function compositeNodeFills(
   let result: FigmaColor | null = null;
   let varName: string | undefined;
 
-  for (let i = fills.length - 1; i >= 0; i--) {
+  for (let i = 0; i < fills.length; i++) {
     const paint = fills[i] as FigmaPaint;
     if (paint.visible === false) continue;
     const resolvedColor = resolvePaintColor(paint, context);
@@ -203,10 +203,12 @@ function walkTree(
 
   if (node.type !== "TEXT") {
     const fills = node.fills as FigmaPaint[] | undefined;
+    const nodeOpacity = node.opacity ?? 1;
     if (fills && fills.length > 0) {
       const composite = compositeNodeFills(fills, context);
       if (composite.color) {
-        childBg = blendColor(childBg, composite.color, composite.color.a);
+        const effectiveAlpha = composite.color.a * nodeOpacity;
+        childBg = blendColor(childBg, composite.color, effectiveAlpha);
         childBgVarName = composite.varName ?? childBgVarName;
       }
     }
