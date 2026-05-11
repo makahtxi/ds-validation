@@ -26,6 +26,12 @@ const LARGE_FONT_SIZE_BOLD = 14;
 
 const WHITE_BG: FigmaColor = { r: 1, g: 1, b: 1, a: 1 };
 
+const DISABLED_VARIANT_RE = /\bState\s*=\s*Disabled\b/i;
+
+function isDisabledVariant(node: FigmaNode): boolean {
+  return DISABLED_VARIANT_RE.test(node.name);
+}
+
 function isLargeText(node: FigmaNode): boolean {
   const fontSize = node.style?.fontSize;
   if (!fontSize) return false;
@@ -189,6 +195,7 @@ function walkTree(
 
   if (node.type === "COMPONENT_SET") {
     for (const child of node.children ?? []) {
+      if (isDisabledVariant(child)) continue;
       textNodesChecked += walkTree(child, nodePath, bgColor, bgVarName, context, violations);
     }
     return textNodesChecked;
