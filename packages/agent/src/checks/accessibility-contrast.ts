@@ -221,8 +221,24 @@ function walkTree(
     }
   }
 
+  let siblingBg = childBg;
+  let siblingBgVarName = childBgVarName;
+
   for (const child of node.children ?? []) {
-    textNodesChecked += walkTree(child, nodePath, childBg, childBgVarName, context, violations);
+    textNodesChecked += walkTree(child, nodePath, siblingBg, siblingBgVarName, context, violations);
+
+    if (child.type !== "TEXT") {
+      const fills = child.fills as FigmaPaint[] | undefined;
+      const childOpacity = child.opacity ?? 1;
+      if (fills && fills.length > 0) {
+        const composite = compositeNodeFills(fills, context);
+        if (composite.color) {
+          const effectiveAlpha = composite.color.a * childOpacity;
+          siblingBg = blendColor(siblingBg, composite.color, effectiveAlpha);
+          siblingBgVarName = composite.varName ?? siblingBgVarName;
+        }
+      }
+    }
   }
 
   return textNodesChecked;

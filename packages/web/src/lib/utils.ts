@@ -66,6 +66,8 @@ export function summaryText(
     primitive_tokens_found: `${p.count ?? count ?? "?"} primitive token reference${(p.count ?? count) === 1 ? "" : "s"}`,
     state_variables_complete: "All 5 states defined",
     state_variables_partial: `${p.found ?? "?"}/${p.total ?? 5} states defined`,
+    contrast_found: `${p.count ?? count ?? "?"} contrast violation${(p.count ?? count) === 1 ? "" : "s"}`,
+    contrast_clean: "All text meets contrast requirements",
   };
   return map[t] || t;
 }
@@ -76,4 +78,5 @@ export const CHECK_DEFS = [
   { id: "hardcoded-text-styles", short: "Typography", name: "No Hard-Coded Text Styles", weight: 0.2 },
   { id: "no-primitive-tokens", short: "Tokens", name: "Correct Token Usage", weight: 0.25 },
   { id: "state-variables", short: "States", name: "State Variables Available", weight: 0.15 },
+  { id: "accessibility-contrast", short: "Contrast", name: "Accessibility Contrast", weight: 0.2 },
 ] as const;

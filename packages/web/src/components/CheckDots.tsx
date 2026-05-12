@@ -9,7 +9,7 @@ interface CheckDotsProps {
 }
 
 export function CheckDots({ component }: CheckDotsProps) {
-  const total = component.totalChecks || 5;
+  const total = component.totalChecks || CHECK_DEFS.length;
   const passed = component.passedChecks || 0;
   const fails = component.score < 50 ? 1 : 0;
   return (
