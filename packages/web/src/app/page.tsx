@@ -32,7 +32,7 @@ export default function HomePage() {
 
   for (const c of audit.components) {
     const passed = c.passedChecks || 0;
-    const total = c.totalChecks || 5;
+    const total = c.totalChecks || CHECK_DEFS.length;
     const fails = c.score < 50 ? 1 : 0;
     CHECK_DEFS.forEach((d, i) => {
       const bucket = byCheck[d.id];

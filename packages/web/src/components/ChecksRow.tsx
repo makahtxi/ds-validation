@@ -21,7 +21,7 @@ export function ChecksRow({ audit, aggregates }: ChecksRowProps) {
     <>
       <div className="section-h">
         <h2>Conformance Checks</h2>
-        <span className="meta">5 checks &middot; weighted average</span>
+        <span className="meta">{CHECK_DEFS.length} checks &middot; weighted average</span>
       </div>
       <div className="checks-row">
         {CHECK_DEFS.map((def) => {
