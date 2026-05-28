@@ -2,7 +2,7 @@ import { Command } from "commander";
 import prompts from "prompts";
 import { FigmaClient } from "@ds-validation/figma";
 import { auditFile, registry } from "@ds-validation/agent";
-import { McpVariableClient } from "@ds-validation/mcp";
+import { McpVariableClient, PluginVariableClient } from "@ds-validation/mcp";
 import {
   writeAuditResult,
   loadAuditResult,
@@ -26,9 +26,10 @@ export function auditCommand(): Command {
     .description("Audit a Figma design system file")
     .argument("<figma-url>", "Figma file URL")
     .option("-k, --api-key <key>", "Figma API key (or set FIGMA_ACCESS_TOKEN)")
-    .option("--variable-source <source>", "How to fetch variables: rest-api, mcp, or skip", "rest-api")
+    .option("--variable-source <source>", "How to fetch variables: rest-api, plugin, or skip (mcp is deprecated)", "rest-api")
     .option("--mcp-command <command>", "MCP server command (default: npx -y figma-console-mcp@latest)", "npx")
     .option("--mcp-args <args>", "MCP server args (comma-separated)", "-y,figma-console-mcp@latest,--stdio")
+    .option("--plugin-port <port>", "Local port for the DS Validation Figma plugin to POST variables to", "7070")
     .option("-o, --output <dir>", "Output directory", "./output")
     .option(
       "--pages <pages>",
@@ -43,6 +44,7 @@ export function auditCommand(): Command {
           variableSource: string;
           mcpCommand: string;
           mcpArgs: string;
+          pluginPort: string;
           output: string;
           pages?: string;
           debug?: boolean;
@@ -71,7 +73,7 @@ export function auditCommand(): Command {
             process.exit(1);
           }
 
-          const variableSource = options.variableSource as "rest-api" | "mcp" | "skip";
+          const variableSource = options.variableSource as "rest-api" | "plugin" | "mcp" | "skip";
 
           // Only prompt if user didn't explicitly specify --variable-source
           const userSpecifiedVariableSource = process.argv.includes('--variable-source');
@@ -85,7 +87,7 @@ export function auditCommand(): Command {
               message: "How should I fetch Figma Variables?",
               choices: [
                 { title: "REST API (requires file_variables:read scope)", value: "rest-api" },
-                { title: "MCP server (uses figma-console-mcp, no special scope needed)", value: "mcp" },
+                { title: "Figma plugin (open the DS Validation plugin in your Figma file)", value: "plugin" },
                 { title: "Skip variables (primitive token check will be disabled)", value: "skip" },
               ],
               initial: 1,
@@ -148,7 +150,20 @@ export function auditCommand(): Command {
           if (finalVariableSource === "skip") {
             console.log("  Skipping variables (user choice).");
             console.log("  Note: The \"No Primitive Tokens\" check will be skipped.");
+          } else if (finalVariableSource === "plugin") {
+            const pluginPort = parseInt(options.pluginPort, 10);
+            const pluginClient = new PluginVariableClient({ port: pluginPort });
+            try {
+              variables = await pluginClient.getVariables();
+              variablesAvailable = Object.keys(variables).length > 0;
+              console.log(`  Found ${Object.keys(variables).length} variables (via Figma plugin)`);
+            } catch (err) {
+              const msg = err instanceof Error ? err.message : String(err);
+              console.warn(`  Figma plugin variable fetch failed: ${msg}`);
+              console.warn("  The \"No Primitive Tokens\" check will be skipped.\n");
+            }
           } else if (finalVariableSource === "mcp") {
+            console.warn("  Warning: --variable-source mcp is deprecated. Use --variable-source plugin instead.");
             console.log("  Fetching variables via MCP server...");
             const mcpArgs = options.mcpArgs.split(",").map((a: string) => a.trim());
             const mcpClient = new McpVariableClient({
@@ -192,7 +207,7 @@ export function auditCommand(): Command {
                   "    1. Update your Figma token to include `file_variables:read`, or",
                 );
                 console.warn(
-                  "    2. Re-run with --variable-source mcp to use an MCP server, or",
+                  "    2. Re-run with --variable-source plugin to use the Figma plugin, or",
                 );
                 console.warn(
                   "    3. Re-run with --variable-source skip to disable variable checks.",
@@ -200,7 +215,7 @@ export function auditCommand(): Command {
               } else {
                 console.warn(`  Could not fetch variables: ${msg}`);
                 console.warn(
-                  "  Try --variable-source mcp to use an MCP server instead.",
+                  "  Try --variable-source plugin to use the Figma plugin instead.",
                 );
               }
               console.warn(

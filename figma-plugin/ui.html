@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      body { font-family: Inter, sans-serif; font-size: 12px; padding: 16px; color: #333; }
+      h3 { font-size: 13px; font-weight: 600; margin-bottom: 12px; }
+      .row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+      label { color: #555; white-space: nowrap; }
+      input[type="number"] {
+        width: 72px; padding: 4px 6px;
+        border: 1px solid #ccc; border-radius: 4px;
+        font-size: 12px;
+      }
+      button {
+        padding: 5px 12px; background: #18a0fb; color: #fff;
+        border: none; border-radius: 4px; cursor: pointer; font-size: 12px;
+      }
+      button:hover { background: #0d8de3; }
+      button:disabled { background: #aaa; cursor: not-allowed; }
+      #status { margin-top: 12px; line-height: 1.5; }
+      .info  { color: #888; }
+      .ok    { color: #1aaa2b; }
+      .error { color: #e53935; }
+      #count { color: #555; margin-top: 4px; font-size: 11px; }
+    </style>
+  </head>
+  <body>
+    <h3>DS Validation</h3>
+
+    <div class="row">
+      <label for="port">CLI port:</label>
+      <input type="number" id="port" value="7070" min="1024" max="65535" />
+      <button id="send-btn" disabled>Resend</button>
+    </div>
+
+    <div id="status" class="info">Fetching variables…</div>
+    <div id="count"></div>
+
+    <script>
+      var variables = null;
+      var statusEl = document.getElementById("status");
+      var countEl  = document.getElementById("count");
+      var sendBtn  = document.getElementById("send-btn");
+      var portEl   = document.getElementById("port");
+
+      window.onmessage = function (event) {
+        var msg = event.data.pluginMessage;
+        if (!msg) return;
+
+        if (msg.type === "variables") {
+          variables = msg.data;
+          var n = Object.keys(variables).length;
+          countEl.textContent = n + " variable" + (n !== 1 ? "s" : "") + " found";
+          sendBtn.disabled = false;
+          sendVariables();
+        }
+      };
+
+      function sendVariables() {
+        if (!variables) return;
+        var port = portEl.value;
+        setStatus("info", "Sending to localhost:" + port + "…");
+
+        fetch("http://localhost:" + port + "/variables", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(variables),
+        })
+          .then(function (res) {
+            if (res.ok) {
+              setStatus("ok", "Variables sent — you can close this plugin.");
+            } else {
+              setStatus("error", "Server error " + res.status + ". Is the CLI running?");
+            }
+          })
+          .catch(function () {
+            setStatus(
+              "error",
+              "Could not reach localhost:" + port + ". Start the CLI first, then reopen the plugin."
+            );
+          });
+      }
+
+      sendBtn.addEventListener("click", function () {
+        parent.postMessage({ pluginMessage: { type: "fetch" } }, "*");
+      });
+
+      function setStatus(cls, msg) {
+        statusEl.className = cls;
+        statusEl.textContent = msg;
+      }
+    </script>
+  </body>
+</html>
