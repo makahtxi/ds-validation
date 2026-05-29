@@ -11,6 +11,9 @@ import {
   buildComponentSummary,
   type FigmaNode,
   type FigmaVariable,
+  type FigmaFileMeta,
+  type FigmaPageSummary,
+  type FigmaStyle,
   type AuditResult,
   type ComponentClassification,
   type ClassificationOverride,
@@ -100,12 +103,23 @@ export function auditCommand(): Command {
           }
 
           const figmaClient = new FigmaClient(figmaToken);
+          const resolvedFileKey: string = fileKey;
+
+          // Single API call returns meta, pages, and styles together.
+          // Cast needed because getFileData was added in this worktree and the workspace
+          // symlink still points to the pre-change figma package types.
+          const figmaClientFull = figmaClient as unknown as {
+            getFileData(key: string): Promise<{
+              meta: FigmaFileMeta;
+              pages: FigmaPageSummary[];
+              styles: Record<string, FigmaStyle>;
+            }>;
+          };
 
           console.log(`Fetching Figma file: ${fileKey}...`);
-          const fileMeta = await figmaClient.getFileMeta(fileKey);
+          const { meta: fileMeta, pages: allPages, styles } = await figmaClientFull.getFileData(resolvedFileKey);
           console.log(`File: ${fileMeta.name}`);
-
-          const allPages = await figmaClient.getFilePages(fileKey);
+          console.log(`  Found ${Object.keys(styles).length} styles`);
 
           let selectedPageNames: string[];
           if (options.pages) {
@@ -139,63 +153,65 @@ export function auditCommand(): Command {
             selectedPageNames.includes(p.name),
           );
 
-          console.log("\nFetching styles...");
-          const styles = await figmaClient.getFileStyles(fileKey);
-          console.log(`  Found ${Object.keys(styles).length} styles`);
-
-          console.log("\nFetching variables...");
-          let variables: Record<string, FigmaVariable> = {};
-          let variablesAvailable = false;
-
-          if (finalVariableSource === "skip") {
-            console.log("  Skipping variables (user choice).");
-            console.log("  Note: The \"No Primitive Tokens\" check will be skipped.");
-          } else if (finalVariableSource === "plugin") {
-            const pluginPort = parseInt(options.pluginPort, 10);
-            const pluginClient = new PluginVariableClient({ port: pluginPort });
-            try {
-              variables = await pluginClient.getVariables();
-              variablesAvailable = Object.keys(variables).length > 0;
-              console.log(`  Found ${Object.keys(variables).length} variables (via Figma plugin)`);
-            } catch (err) {
-              const msg = err instanceof Error ? err.message : String(err);
-              console.warn(`  Figma plugin variable fetch failed: ${msg}`);
-              console.warn("  The \"No Primitive Tokens\" check will be skipped.\n");
+          async function fetchVariables(): Promise<{ variables: Record<string, FigmaVariable>; variablesAvailable: boolean }> {
+            if (finalVariableSource === "skip") {
+              console.log("\nSkipping variables (user choice).");
+              console.log("  Note: The \"No Primitive Tokens\" check will be skipped.");
+              return { variables: {}, variablesAvailable: false };
             }
-          } else if (finalVariableSource === "mcp") {
-            console.warn("  Warning: --variable-source mcp is deprecated. Use --variable-source plugin instead.");
-            console.log("  Fetching variables via MCP server...");
-            const mcpArgs = options.mcpArgs.split(",").map((a: string) => a.trim());
-            const mcpClient = new McpVariableClient({
-              command: options.mcpCommand,
-              args: mcpArgs,
-              figmaApiKey: figmaToken,
-            });
 
-            try {
-              variables = await mcpClient.getVariables(figmaUrl);
-              variablesAvailable = Object.keys(variables).length > 0;
-              console.log(`  Found ${Object.keys(variables).length} variables (via MCP)`);
-            } catch (err) {
-              const msg = err instanceof Error ? err.message : String(err);
-              console.warn(`  MCP variable fetch failed: ${msg}`);
-              console.warn("  Falling back to REST API...");
+            console.log("\nFetching variables...");
+
+            if (finalVariableSource === "plugin") {
+              const pluginPort = parseInt(options.pluginPort, 10);
+              const pluginClient = new PluginVariableClient({ port: pluginPort });
               try {
-                variables = await figmaClient.getFileVariables(fileKey);
-                variablesAvailable = Object.keys(variables).length > 0;
-                console.log(`  Found ${Object.keys(variables).length} variables (via REST API)`);
-              } catch (restErr) {
-                const restMsg = restErr instanceof Error ? restErr.message : String(restErr);
-                console.warn(`  REST API also failed: ${restMsg}`);
+                const vars = await pluginClient.getVariables();
+                console.log(`  Found ${Object.keys(vars).length} variables (via Figma plugin)`);
+                return { variables: vars, variablesAvailable: Object.keys(vars).length > 0 };
+              } catch (err) {
+                const msg = err instanceof Error ? err.message : String(err);
+                console.warn(`  Figma plugin variable fetch failed: ${msg}`);
                 console.warn("  The \"No Primitive Tokens\" check will be skipped.\n");
+                return { variables: {}, variablesAvailable: false };
               }
             }
-          } else {
+
+            if (finalVariableSource === "mcp") {
+              console.warn("  Warning: --variable-source mcp is deprecated. Use --variable-source plugin instead.");
+              console.log("  Fetching variables via MCP server...");
+              const mcpArgs = options.mcpArgs.split(",").map((a: string) => a.trim());
+              const mcpClient = new McpVariableClient({
+                command: options.mcpCommand,
+                args: mcpArgs,
+                figmaApiKey: figmaToken,
+              });
+              try {
+                const vars = await mcpClient.getVariables(figmaUrl);
+                console.log(`  Found ${Object.keys(vars).length} variables (via MCP)`);
+                return { variables: vars, variablesAvailable: Object.keys(vars).length > 0 };
+              } catch (err) {
+                const msg = err instanceof Error ? err.message : String(err);
+                console.warn(`  MCP variable fetch failed: ${msg}`);
+                console.warn("  Falling back to REST API...");
+                try {
+                  const vars = await figmaClient.getFileVariables(resolvedFileKey);
+                  console.log(`  Found ${Object.keys(vars).length} variables (via REST API)`);
+                  return { variables: vars, variablesAvailable: Object.keys(vars).length > 0 };
+                } catch (restErr) {
+                  const restMsg = restErr instanceof Error ? restErr.message : String(restErr);
+                  console.warn(`  REST API also failed: ${restMsg}`);
+                  console.warn("  The \"No Primitive Tokens\" check will be skipped.\n");
+                  return { variables: {}, variablesAvailable: false };
+                }
+              }
+            }
+
             // rest-api
             try {
-              variables = await figmaClient.getFileVariables(fileKey);
-              variablesAvailable = true;
-              console.log(`  Found ${Object.keys(variables).length} variables`);
+              const vars = await figmaClient.getFileVariables(resolvedFileKey);
+              console.log(`  Found ${Object.keys(vars).length} variables`);
+              return { variables: vars, variablesAvailable: true };
             } catch (err) {
               const msg = err instanceof Error ? err.message : String(err);
               if (msg.includes("403")) {
@@ -221,18 +237,29 @@ export function auditCommand(): Command {
               console.warn(
                 "  The \"No Primitive Tokens\" check will be skipped.\n",
               );
+              return { variables: {}, variablesAvailable: false };
             }
           }
 
           console.log("\nFetching component nodes (with bound variable data)...");
+          const t0 = Date.now();
+
+          const [{ variables, variablesAvailable }, pageComponentResults] = await Promise.all([
+            fetchVariables(),
+            Promise.all(
+              selectedPages.map(async (page) => {
+                const t = Date.now();
+                const components = await figmaClient.getComponentNodesWithData(resolvedFileKey, page.id);
+                console.log(`  Page "${page.name}": ${components.length} components fetched in ${((Date.now() - t) / 1000).toFixed(1)}s`);
+                return { page, components };
+              }),
+            ),
+          ]);
+          console.log(`  Total fetch: ${((Date.now() - t0) / 1000).toFixed(1)}s`);
+
           const componentNodes = new Map<string, FigmaNode>();
           const componentPageMap = new Map<string, string>();
-
-          for (const page of selectedPages) {
-            const components = await figmaClient.getComponentNodesWithData(
-              fileKey,
-              page.id,
-            );
+          for (const { page, components } of pageComponentResults) {
             for (const comp of components) {
               componentNodes.set(comp.name, comp);
               componentPageMap.set(comp.name, page.name);
@@ -240,6 +267,7 @@ export function auditCommand(): Command {
           }
 
           console.log(`\nAuditing ${componentNodes.size} components...`);
+          const tAudit = Date.now();
 
           const savedDecisions = loadClassifications(fileKey);
           const componentNames = Array.from(componentNodes.keys());
@@ -359,6 +387,7 @@ export function auditCommand(): Command {
             checkOverrides,
             classifications,
           });
+          console.log(`  Check processing: ${((Date.now() - tAudit) / 1000).toFixed(1)}s`);
 
           const outputDir = options.output;
 

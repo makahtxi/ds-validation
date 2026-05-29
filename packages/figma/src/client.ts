@@ -172,6 +172,37 @@ export class FigmaClient {
     return res.json() as Promise<T>;
   }
 
+  async getFileData(fileKey: string): Promise<{
+    meta: FigmaFileMeta;
+    pages: FigmaPageSummary[];
+    styles: Record<string, FigmaStyle>;
+  }> {
+    // depth=1 returns only file metadata + top-level page nodes (~10 KB vs 5–20 MB for the
+    // full tree). Component counts are unavailable at this depth — they show as 0 in the UI.
+    const data = await this.request<FigmaRestFile>(`/files/${fileKey}?depth=1`);
+    const meta: FigmaFileMeta = {
+      key: fileKey,
+      name: data.name,
+      lastModified: data.lastModified,
+      thumbnailUrl: data.thumbnailUrl,
+    };
+    const pages: FigmaPageSummary[] = (data.document.children ?? []).map((page) => ({
+      id: page.id,
+      name: page.name,
+      componentCount: countComponents(page), // always 0 at depth=1; kept for API compatibility
+    }));
+    const styles: Record<string, FigmaStyle> = {};
+    for (const [id, style] of Object.entries(data.styles ?? {})) {
+      styles[id] = {
+        id: style.id,
+        name: style.name,
+        styleType: style.styleType,
+        description: style.description,
+      };
+    }
+    return { meta, pages, styles };
+  }
+
   async getFileMeta(fileKey: string): Promise<FigmaFileMeta> {
     const data = await this.request<FigmaRestFile>(`/files/${fileKey}`);
     return {
@@ -211,16 +242,7 @@ export class FigmaClient {
   async getFileStyles(
     fileKey: string,
   ): Promise<Record<string, FigmaStyle>> {
-    const data = await this.request<FigmaRestFile>(`/files/${fileKey}`);
-    const styles: Record<string, FigmaStyle> = {};
-    for (const [id, style] of Object.entries(data.styles ?? {})) {
-      styles[id] = {
-        id: style.id,
-        name: style.name,
-        styleType: style.styleType,
-        description: style.description,
-      };
-    }
+    const { styles } = await this.getFileData(fileKey);
     return styles;
   }
 
@@ -274,17 +296,16 @@ export class FigmaClient {
     fileKey: string,
     pageId: string,
   ): Promise<FigmaNode[]> {
+    // One API call: the page-level response already contains all component nodes
+    // recursively via mapNode. Re-fetching by ID (the old approach) was redundant
+    // and doubled the download for every page.
     const nodes = await this.getFileNodes(fileKey, [pageId]);
     const pageNode = nodes[pageId];
     if (!pageNode) return [];
 
-    const componentIds: string[] = [];
-    collectComponentIds(pageNode, componentIds);
-
-    if (componentIds.length === 0) return [];
-
-    const detailedNodes = await this.getFileNodes(fileKey, componentIds);
-    return Object.values(detailedNodes);
+    const components: FigmaNode[] = [];
+    findComponents(pageNode, components);
+    return components;
   }
 }
 
@@ -304,13 +325,12 @@ function countComponents(node: FigmaRestNode): number {
 }
 
 function findComponents(node: FigmaNode, result: FigmaNode[]): void {
-  if (
-    node.type === "COMPONENT" ||
-    node.type === "COMPONENT_SET" ||
-    node.type === "INSTANCE"
-  ) {
+  if (node.type === "COMPONENT" || node.type === "COMPONENT_SET") {
     result.push(node);
-    return;
+    return; // don't descend into variants — they're audited as part of the parent
+  }
+  if (node.type === "INSTANCE") {
+    return; // skip instances: they're usages, not component definitions
   }
   for (const child of node.children ?? []) {
     findComponents(child, result);

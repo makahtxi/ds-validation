@@ -26,9 +26,9 @@ const LARGE_FONT_SIZE_BOLD = 14;
 
 const WHITE_BG: FigmaColor = { r: 1, g: 1, b: 1, a: 1 };
 
-const DISABLED_VARIANT_RE = /\bState\s*=\s*Disabled\b/i;
+export const DISABLED_VARIANT_RE = /\bState\s*=\s*Disabled\b/i;
 
-function isDisabledVariant(node: FigmaNode): boolean {
+export function isDisabledVariant(node: FigmaNode): boolean {
   return DISABLED_VARIANT_RE.test(node.name);
 }
 
@@ -108,7 +108,7 @@ function getVariableName(
   return variable?.name;
 }
 
-function compositeNodeFills(
+export function compositeNodeFills(
   fills: FigmaPaint[],
   context: CheckContext,
 ): { color: FigmaColor | null; varName: string | undefined } {
@@ -144,7 +144,7 @@ function getTextFillPaint(node: FigmaNode): FigmaPaint | undefined {
   return undefined;
 }
 
-function checkTextContrast(
+export function checkTextContrast(
   node: FigmaNode,
   nodePath: string,
   bgColor: FigmaColor,
