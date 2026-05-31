@@ -11,10 +11,54 @@ import type {
 } from "@ds-validation/core";
 import { computeCheckScore, determineStatus, buildSummary, colorToHex } from "@ds-validation/core";
 
-interface TokenRef {
+export interface TokenRef {
   nodePath: string;
   property: string;
   varId: string;
+}
+
+/**
+ * Collect token refs for a single node (no recursion).
+ * Called by both the single-pass walker and collectAllTokenRefs.
+ */
+export function visitTokenRefNode(
+  node: FigmaNode,
+  nodePath: string,
+  refs: TokenRef[],
+): void {
+  if (node.type === "COMPONENT_SET") return;
+
+  if (node.boundVariables) {
+    for (const [prop, bv] of Object.entries(node.boundVariables)) {
+      refs.push({ nodePath, property: prop, varId: (bv as FigmaBoundVariable).id });
+    }
+  }
+
+  if (node.fills) {
+    for (let i = 0; i < node.fills.length; i++) {
+      const paint = node.fills[i] as FigmaPaint;
+      if (paint.boundVariables) {
+        for (const [prop, bv] of Object.entries(paint.boundVariables)) {
+          refs.push({ nodePath, property: `fills[${i}].${prop}`, varId: (bv as FigmaBoundVariable).id });
+        }
+      }
+    }
+  }
+
+  if (node.strokes) {
+    for (let i = 0; i < node.strokes.length; i++) {
+      const paint = node.strokes[i] as FigmaPaint;
+      if (paint.boundVariables) {
+        for (const [prop, bv] of Object.entries(paint.boundVariables)) {
+          refs.push({ nodePath, property: `strokes[${i}].${prop}`, varId: (bv as FigmaBoundVariable).id });
+        }
+      }
+    }
+  }
+
+  if (node.styleId) {
+    refs.push({ nodePath, property: "styleId", varId: node.styleId });
+  }
 }
 
 function collectAllTokenRefs(
@@ -23,52 +67,7 @@ function collectAllTokenRefs(
   refs: TokenRef[],
 ): void {
   const nodePath = path ? `${path} > ${node.name}` : node.name;
-
-  if (node.type !== "COMPONENT_SET") {
-    if (node.boundVariables) {
-      for (const [prop, bv] of Object.entries(node.boundVariables)) {
-        const boundVar = bv as FigmaBoundVariable;
-        refs.push({ nodePath, property: prop, varId: boundVar.id });
-      }
-    }
-
-    if (node.fills) {
-      for (let i = 0; i < node.fills.length; i++) {
-        const paint = node.fills[i] as FigmaPaint;
-        if (paint.boundVariables) {
-          for (const [prop, bv] of Object.entries(paint.boundVariables)) {
-            const boundVar = bv as FigmaBoundVariable;
-            refs.push({
-              nodePath,
-              property: `fills[${i}].${prop}`,
-              varId: boundVar.id,
-            });
-          }
-        }
-      }
-    }
-
-    if (node.strokes) {
-      for (let i = 0; i < node.strokes.length; i++) {
-        const paint = node.strokes[i] as FigmaPaint;
-        if (paint.boundVariables) {
-          for (const [prop, bv] of Object.entries(paint.boundVariables)) {
-            const boundVar = bv as FigmaBoundVariable;
-            refs.push({
-              nodePath,
-              property: `strokes[${i}].${prop}`,
-              varId: boundVar.id,
-            });
-          }
-        }
-      }
-    }
-
-    if (node.styleId) {
-      refs.push({ nodePath, property: "styleId", varId: node.styleId });
-    }
-  }
-
+  visitTokenRefNode(node, nodePath, refs);
   for (const child of node.children ?? []) {
     collectAllTokenRefs(child, nodePath, refs);
   }
@@ -133,6 +132,57 @@ function getPrimitiveValueDisplay(variable: FigmaVariable): string {
   return "unknown value";
 }
 
+/**
+ * Post-process collected token refs into a CheckResult.
+ * Called by both the single-pass walker (in orchestrator) and the check's own run().
+ */
+export function buildPrimitiveTokensResult(
+  checkId: string,
+  refs: TokenRef[],
+  context: CheckContext,
+): CheckResult {
+  if (refs.length === 0) {
+    return {
+      checkId,
+      score: 100,
+      status: "pass",
+      violations: [],
+      summary: buildSummary("primitive_tokens_clean"),
+    };
+  }
+
+  const violations: Violation[] = [];
+  const primitiveExamples: string[] = [];
+
+  for (const ref of refs) {
+    const variable = context.variables[ref.varId];
+    if (!variable) continue;
+
+    if (isPrimitiveVariable(variable)) {
+      const suggestedReplacement = findSemanticAlternative(ref.varId, variable.name, context.variables);
+      const primitiveValue = getPrimitiveValueDisplay(variable);
+      violations.push({
+        nodePath: ref.nodePath,
+        property: ref.property,
+        rawValue: `${variable.name} (${primitiveValue})`,
+        expected: "A semantic/component-level token",
+        suggestedReplacement: suggestedReplacement ?? undefined,
+      });
+      if (primitiveExamples.length < 3) {
+        primitiveExamples.push(`${variable.name}=${primitiveValue}`);
+      }
+    }
+  }
+
+  const score = computeCheckScore(violations.length, refs.length);
+  const status = determineStatus(score);
+  const summary = violations.length > 0
+    ? buildSummary("primitive_tokens_found", { count: violations.length, examples: primitiveExamples.join(", ") })
+    : buildSummary("primitive_tokens_clean");
+
+  return { checkId, score, status, violations, summary };
+}
+
 export const noPrimitiveTokensCheck: ConformanceCheck = {
   id: "no-primitive-tokens",
   name: "No Primitive Tokens",
@@ -141,72 +191,6 @@ export const noPrimitiveTokensCheck: ConformanceCheck = {
   async run(context: CheckContext): Promise<CheckResult> {
     const refs: TokenRef[] = [];
     collectAllTokenRefs(context.componentNode, "", refs);
-
-    if (refs.length === 0) {
-      return {
-        checkId: this.id,
-        score: 100,
-        status: "pass",
-        violations: [],
-        summary: buildSummary("primitive_tokens_clean"),
-      };
-    }
-
-    const uniqueVarIds = [...new Set(refs.map((r) => r.varId))];
-    const varIdToName = new Map<string, string>();
-
-    for (const id of uniqueVarIds) {
-      const variable = context.variables[id];
-      varIdToName.set(id, variable ? variable.name : id);
-    }
-
-    const violations: Violation[] = [];
-    const primitiveExamples: string[] = [];
-    
-    for (const ref of refs) {
-      const variable = context.variables[ref.varId];
-      if (!variable) continue;
-
-      if (isPrimitiveVariable(variable)) {
-        const suggestedReplacement = findSemanticAlternative(
-          ref.varId,
-          variable.name,
-          context.variables,
-        );
-        const primitiveValue = getPrimitiveValueDisplay(variable);
-        violations.push({
-          nodePath: ref.nodePath,
-          property: ref.property,
-          rawValue: `${variable.name} (${primitiveValue})`,
-          expected: "A semantic/component-level token",
-          suggestedReplacement: suggestedReplacement ?? undefined,
-        });
-        
-        if (primitiveExamples.length < 3) {
-          primitiveExamples.push(`${variable.name}=${primitiveValue}`);
-        }
-      }
-    }
-
-    const score = computeCheckScore(violations.length, refs.length);
-    const status = determineStatus(score);
-
-    let summary;
-    if (violations.length > 0) {
-      summary = buildSummary("primitive_tokens_found", {
-        count: violations.length,
-        examples: primitiveExamples.join(", "),
-      });
-    } else {
-      summary = buildSummary("primitive_tokens_clean");
-    }
-
-    return {
-      checkId: this.id,
-      score,
-      status,
-      violations,
-      summary,
-    };
+    return buildPrimitiveTokensResult(this.id, refs, context);
   },
 };
