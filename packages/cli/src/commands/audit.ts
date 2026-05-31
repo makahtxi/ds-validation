@@ -11,9 +11,6 @@ import {
   buildComponentSummary,
   type FigmaNode,
   type FigmaVariable,
-  type FigmaFileMeta,
-  type FigmaPageSummary,
-  type FigmaStyle,
   type AuditResult,
   type ComponentClassification,
   type ClassificationOverride,
@@ -59,13 +56,16 @@ export function auditCommand(): Command {
 
           const config = loadConfig();
 
-          const fileKey = parseFileKey(figmaUrl);
-          if (!fileKey) {
+          const parsedFileKey = parseFileKey(figmaUrl);
+          if (!parsedFileKey) {
             console.error(
               "Could not parse Figma file key from URL. Expected format: https://www.figma.com/design/<fileKey>/...",
             );
             process.exit(1);
           }
+          // Typed as string (not string | null) so the narrowing survives inside the
+          // nested fetchVariables closure below, where control-flow narrowing is reset.
+          const fileKey: string = parsedFileKey;
 
           const figmaToken =
             options.apiKey ?? process.env.FIGMA_ACCESS_TOKEN;
@@ -103,23 +103,14 @@ export function auditCommand(): Command {
           }
 
           const figmaClient = new FigmaClient(figmaToken);
-          const resolvedFileKey: string = fileKey;
 
-          // Single API call returns meta, pages, and styles together.
-          // Cast needed because getFileData was added in this worktree and the workspace
-          // symlink still points to the pre-change figma package types.
-          const figmaClientFull = figmaClient as unknown as {
-            getFileData(key: string): Promise<{
-              meta: FigmaFileMeta;
-              pages: FigmaPageSummary[];
-              styles: Record<string, FigmaStyle>;
-            }>;
-          };
-
+          // Single API call returns meta, pages, and styles together. Note: at
+          // depth=1 the styles map is empty (it is derived from nodes present in
+          // the response). The audit checks read node.styleId directly and never
+          // consult this map, so an empty styles map does not affect results.
           console.log(`Fetching Figma file: ${fileKey}...`);
-          const { meta: fileMeta, pages: allPages, styles } = await figmaClientFull.getFileData(resolvedFileKey);
+          const { meta: fileMeta, pages: allPages, styles } = await figmaClient.getFileData(fileKey);
           console.log(`File: ${fileMeta.name}`);
-          console.log(`  Found ${Object.keys(styles).length} styles`);
 
           let selectedPageNames: string[];
           if (options.pages) {
@@ -195,7 +186,7 @@ export function auditCommand(): Command {
                 console.warn(`  MCP variable fetch failed: ${msg}`);
                 console.warn("  Falling back to REST API...");
                 try {
-                  const vars = await figmaClient.getFileVariables(resolvedFileKey);
+                  const vars = await figmaClient.getFileVariables(fileKey);
                   console.log(`  Found ${Object.keys(vars).length} variables (via REST API)`);
                   return { variables: vars, variablesAvailable: Object.keys(vars).length > 0 };
                 } catch (restErr) {
@@ -209,7 +200,7 @@ export function auditCommand(): Command {
 
             // rest-api
             try {
-              const vars = await figmaClient.getFileVariables(resolvedFileKey);
+              const vars = await figmaClient.getFileVariables(fileKey);
               console.log(`  Found ${Object.keys(vars).length} variables`);
               return { variables: vars, variablesAvailable: true };
             } catch (err) {
@@ -249,7 +240,7 @@ export function auditCommand(): Command {
             Promise.all(
               selectedPages.map(async (page) => {
                 const t = Date.now();
-                const components = await figmaClient.getComponentNodesWithData(resolvedFileKey, page.id);
+                const components = await figmaClient.getComponentNodesWithData(fileKey, page.id);
                 console.log(`  Page "${page.name}": ${components.length} components fetched in ${((Date.now() - t) / 1000).toFixed(1)}s`);
                 return { page, components };
               }),

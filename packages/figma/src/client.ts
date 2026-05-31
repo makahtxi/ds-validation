@@ -179,6 +179,9 @@ export class FigmaClient {
   }> {
     // depth=1 returns only file metadata + top-level page nodes (~10 KB vs 5–20 MB for the
     // full tree). Component counts are unavailable at this depth — they show as 0 in the UI.
+    // The `styles` map is also empty at depth=1: Figma derives it from the nodes present in
+    // the response, and the truncated tree contains none. This is intentional — the audit
+    // checks inspect `node.styleId` directly and never read this map, so an empty map is fine.
     const data = await this.request<FigmaRestFile>(`/files/${fileKey}?depth=1`);
     const meta: FigmaFileMeta = {
       key: fileKey,
@@ -324,7 +327,7 @@ function countComponents(node: FigmaRestNode): number {
   return count;
 }
 
-function findComponents(node: FigmaNode, result: FigmaNode[]): void {
+export function findComponents(node: FigmaNode, result: FigmaNode[]): void {
   if (node.type === "COMPONENT" || node.type === "COMPONENT_SET") {
     result.push(node);
     return; // don't descend into variants — they're audited as part of the parent
@@ -334,19 +337,5 @@ function findComponents(node: FigmaNode, result: FigmaNode[]): void {
   }
   for (const child of node.children ?? []) {
     findComponents(child, result);
-  }
-}
-
-function collectComponentIds(node: FigmaNode, ids: string[]): void {
-  if (
-    node.type === "COMPONENT" ||
-    node.type === "COMPONENT_SET" ||
-    node.type === "INSTANCE"
-  ) {
-    ids.push(node.id);
-    return;
-  }
-  for (const child of node.children ?? []) {
-    collectComponentIds(child, ids);
   }
 }
