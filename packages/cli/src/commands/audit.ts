@@ -118,9 +118,7 @@ export function auditCommand(): Command {
           } else {
             console.log("\nPages found:");
             for (const page of allPages) {
-              console.log(
-                `  ${page.name} (${page.componentCount} components)`,
-              );
+              console.log(`  ${page.name}`);
             }
 
             const response = await prompts({
@@ -128,7 +126,7 @@ export function auditCommand(): Command {
               name: "pages",
               message: "Select pages to audit",
               choices: allPages.map((p) => ({
-                title: `${p.name} (${p.componentCount} components)`,
+                title: p.name,
                 value: p.name,
               })),
             });
