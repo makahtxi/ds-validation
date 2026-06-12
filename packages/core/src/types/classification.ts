@@ -11,10 +11,15 @@ export interface ClassificationDecision {
   classification: ComponentClassification;
 }
 
-export interface ClassificationStore {
+export interface ClassificationStoreData {
   fileKey: string;
   decisions: Record<string, ComponentClassification>;
   updatedAt: string;
+}
+
+export interface ClassificationStore {
+  load(fileKey: string): Record<string, ComponentClassification>;
+  save(fileKey: string, decisions: Record<string, ComponentClassification>): void;
 }
 
 export interface ClassificationOverride {

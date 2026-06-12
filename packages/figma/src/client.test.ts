@@ -3,8 +3,13 @@ import type { FigmaNode } from "@ds-validation/core";
 import { FigmaClient, findComponents } from "./client";
 
 describe("FigmaClient", () => {
-  it("can be instantiated", () => {
+  it("can be instantiated with PAT (default)", () => {
     const client = new FigmaClient("test-token");
+    expect(client).toBeDefined();
+  });
+
+  it("can be instantiated with OAuth token type", () => {
+    const client = new FigmaClient("test-token", "oauth");
     expect(client).toBeDefined();
   });
 });

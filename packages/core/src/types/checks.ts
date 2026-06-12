@@ -80,3 +80,8 @@ export interface ComponentAuditResult {
   checkResults: Record<string, CheckResult>;
   pageName: string;
 }
+
+export interface AuditFileResult {
+  audit: AuditResult;
+  components: ComponentAuditResult[];
+}

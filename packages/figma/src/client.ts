@@ -143,25 +143,41 @@ function mapVariableValue(raw: unknown): FigmaVariableValue {
   return String(raw);
 }
 
+export type FigmaTokenType = "pat" | "oauth";
+
+const MAX_RETRIES = 3;
+
 export class FigmaClient {
   private accessToken: string;
+  private tokenType: FigmaTokenType;
   private baseUrl = "https://api.figma.com/v1";
 
-  constructor(accessToken: string) {
+  constructor(accessToken: string, tokenType: FigmaTokenType = "pat") {
     this.accessToken = accessToken;
+    this.tokenType = tokenType;
   }
 
-  private async request<T>(endpoint: string): Promise<T> {
+  private getAuthHeaders(): Record<string, string> {
+    if (this.tokenType === "oauth") {
+      return { Authorization: `Bearer ${this.accessToken}` };
+    }
+    return { "X-Figma-Token": this.accessToken };
+  }
+
+  private async request<T>(endpoint: string, attempt: number = 0): Promise<T> {
     const url = `${this.baseUrl}${endpoint}`;
     const res = await fetch(url, {
-      headers: { "X-Figma-Token": this.accessToken },
+      headers: this.getAuthHeaders(),
     });
 
     if (res.status === 429) {
+      if (attempt >= MAX_RETRIES) {
+        throw new Error(`Figma API rate limit exceeded after ${MAX_RETRIES} retries`);
+      }
       const retryAfter = res.headers.get("Retry-After");
       const waitMs = retryAfter ? parseInt(retryAfter, 10) * 1000 : 60000;
       await new Promise((resolve) => setTimeout(resolve, waitMs));
-      return this.request<T>(endpoint);
+      return this.request<T>(endpoint, attempt + 1);
     }
 
     if (!res.ok) {

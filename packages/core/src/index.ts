@@ -25,17 +25,25 @@ export type {
   AuditResult,
   AuditMeta,
   ComponentAuditResult,
+  AuditFileResult,
 } from "./types/checks.js";
 
 export type {
   ComponentClassification,
   CheckComponentRules,
   ClassificationDecision,
+  ClassificationStoreData,
   ClassificationStore,
   ClassificationOverride,
 } from "./types/classification.js";
 
 export type { DSValidationConfig } from "./types/config.js";
+
+export {
+  DEFAULT_CHECK_WEIGHTS,
+  DEFAULT_CHECK_ENABLED,
+  resolveConfig,
+} from "./config/defaults.js";
 
 export {
   computeCheckScore,

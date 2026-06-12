@@ -1,28 +1,12 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import type { AuditResult } from "@ds-validation/core";
 import { MatrixSection } from "./MatrixSection";
 import { ComponentTable } from "./ComponentTable";
 
 interface DashboardClientProps {
-  audit: {
-    meta: {
-      figmaFileKey: string;
-      figmaFileName: string;
-      auditedAt: string;
-      pagesAudited: string[];
-      conformanceChecks: { id: string; name: string; weight: number }[];
-    };
-    totalScore: number;
-    components: {
-      name: string;
-      score: number;
-      passedChecks: number;
-      totalChecks: number;
-      pageName: string;
-      jsonPath: string;
-    }[];
-  };
+  audit: AuditResult;
 }
 
 export function DashboardClient({ audit }: DashboardClientProps) {
