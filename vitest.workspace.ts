@@ -6,4 +6,5 @@ export default defineWorkspace([
   "packages/agent",
   "packages/mcp",
   "packages/cli",
+  "packages/web",
 ]);

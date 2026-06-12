@@ -1,4 +1,4 @@
-import { CHECK_DEFS, statusForScore } from "@/lib/utils";
+import { CHECK_DEFS } from "@/lib/utils";
 
 interface CheckDotsProps {
   component: {
