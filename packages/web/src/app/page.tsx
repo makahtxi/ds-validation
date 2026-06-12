@@ -1,18 +1,12 @@
 import { createClient } from "@/lib/supabase/server";
 import { LandingPage } from "@/components/LandingPage";
-import { AppDashboard } from "@/components/AppDashboard";
-import { loadAuditData } from "@/lib/loadAuditData";
+import { redirect } from "next/navigation";
 
 export default async function HomePage() {
   const hasSession = await checkSession();
-  const hasLocalData = !!loadAuditData();
 
   if (hasSession) {
-    return <AppDashboard />;
-  }
-
-  if (hasLocalData) {
-    return <AppDashboard />;
+    redirect("/audits");
   }
 
   return <LandingPage />;

@@ -8,10 +8,15 @@
       h3 { font-size: 13px; font-weight: 600; margin-bottom: 12px; }
       .row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
       label { color: #555; white-space: nowrap; }
-      input[type="number"] {
-        width: 72px; padding: 4px 6px;
+      input[type="number"], input[type="text"] {
+        width: 100%; padding: 4px 8px;
         border: 1px solid #ccc; border-radius: 4px;
         font-size: 12px;
+      }
+      input[type="text"].code-input {
+        font-family: monospace; font-size: 16px;
+        letter-spacing: 3px; text-transform: uppercase;
+        text-align: center; padding: 8px;
       }
       button {
         padding: 5px 12px; background: #18a0fb; color: #fff;
@@ -19,31 +24,106 @@
       }
       button:hover { background: #0d8de3; }
       button:disabled { background: #aaa; cursor: not-allowed; }
+      button.secondary { background: #f0f0f0; color: #555; }
+      button.secondary:hover { background: #e5e5e5; }
       #status { margin-top: 12px; line-height: 1.5; }
       .info  { color: #888; }
       .ok    { color: #1aaa2b; }
       .error { color: #e53935; }
       #count { color: #555; margin-top: 4px; font-size: 11px; }
+      .tab-bar { display: flex; border-bottom: 1px solid #ddd; margin-bottom: 16px; }
+      .tab {
+        padding: 6px 12px; cursor: pointer; font-size: 11px;
+        color: #888; border-bottom: 2px solid transparent;
+      }
+      .tab.active { color: #18a0fb; border-bottom-color: #18a0fb; }
+      .tab:hover { color: #333; }
+      .section { display: none; }
+      .section.active { display: block; }
+      .instruction { color: #666; font-size: 11px; line-height: 1.6; margin-bottom: 10px; }
+      .instruction strong { color: #333; }
     </style>
   </head>
   <body>
     <h3>DS Validation</h3>
 
-    <div class="row">
-      <label for="port">CLI port:</label>
-      <input type="number" id="port" value="7070" min="1024" max="65535" />
-      <button id="send-btn" disabled>Resend</button>
+    <div class="tab-bar">
+      <div class="tab active" data-tab="hosted">Hosted</div>
+      <div class="tab" data-tab="localhost">CLI / Localhost</div>
+    </div>
+
+    <div id="count"></div>
+
+    <!-- Hosted tab -->
+    <div id="hosted" class="section active">
+      <p class="instruction">
+        <strong>How to use:</strong> When you start an audit on the DS Validation website
+        and choose the <strong>Figma Plugin</strong> variable source, you will receive
+        a 6-character pairing code. Enter it below and click <strong>Send</strong>.
+      </p>
+
+      <div class="row">
+        <label for="pairing-code">Pairing code:</label>
+      </div>
+      <input
+        type="text"
+        id="pairing-code"
+        class="code-input"
+        placeholder="ABC123"
+        maxlength="6"
+        autocomplete="off"
+        spellcheck="false"
+      />
+
+      <div class="row" style="margin-top: 8px;">
+        <label for="server-url">Server:</label>
+        <input type="text" id="server-url" value="https://ds-validation.com" />
+      </div>
+
+      <div class="row" style="margin-top: 8px;">
+        <button id="send-hosted-btn" disabled>Send to server</button>
+      </div>
+    </div>
+
+    <!-- Localhost tab -->
+    <div id="localhost" class="section">
+      <p class="instruction">
+        Use this mode when running the <strong>CLI</strong> locally. Enter the
+        port number your CLI is listening on and click <strong>Resend</strong>.
+      </p>
+
+      <div class="row">
+        <label for="port">CLI port:</label>
+        <input type="number" id="port" value="7070" min="1024" max="65535" />
+      </div>
+
+      <div class="row">
+        <button id="send-btn" disabled>Resend</button>
+      </div>
     </div>
 
     <div id="status" class="info">Fetching variables…</div>
-    <div id="count"></div>
 
     <script>
       var variables = null;
+      var currentFileKey = "";
       var statusEl = document.getElementById("status");
       var countEl  = document.getElementById("count");
       var sendBtn  = document.getElementById("send-btn");
-      var portEl   = document.getElementById("port");
+      var sendHostedBtn = document.getElementById("send-hosted-btn");
+      var pairingCodeEl = document.getElementById("pairing-code");
+      var serverUrlEl   = document.getElementById("server-url");
+
+      // Tab switching
+      var tabs = document.querySelectorAll(".tab");
+      tabs.forEach(function(tab) {
+        tab.addEventListener("click", function() {
+          tabs.forEach(function(t) { t.classList.remove("active"); });
+          tab.classList.add("active");
+          document.querySelectorAll(".section").forEach(function(s) { s.classList.remove("active"); });
+          document.getElementById(tab.dataset.tab).classList.add("active");
+        });
+      });
 
       window.onmessage = function (event) {
         var msg = event.data.pluginMessage;
@@ -51,40 +131,53 @@
 
         if (msg.type === "variables") {
           variables = msg.data;
+          currentFileKey = msg.fileKey || "";
           var n = Object.keys(variables).length;
           countEl.textContent = n + " variable" + (n !== 1 ? "s" : "") + " found";
           sendBtn.disabled = false;
-          sendVariables();
+          sendHostedBtn.disabled = false;
+          setStatus("info", "Ready to send " + n + " variables.");
+        }
+
+        if (msg.type === "status") {
+          setStatus(msg.cls, msg.msg);
         }
       };
 
-      function sendVariables() {
-        if (!variables) return;
-        var port = portEl.value;
-        setStatus("info", "Sending to localhost:" + port + "…");
-
-        fetch("http://localhost:" + port + "/variables", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(variables),
-        })
-          .then(function (res) {
-            if (res.ok) {
-              setStatus("ok", "Variables sent — you can close this plugin.");
-            } else {
-              setStatus("error", "Server error " + res.status + ". Is the CLI running?");
-            }
-          })
-          .catch(function () {
-            setStatus(
-              "error",
-              "Could not reach localhost:" + port + ". Start the CLI first, then reopen the plugin."
-            );
-          });
-      }
-
+      // Localhost send
       sendBtn.addEventListener("click", function () {
-        parent.postMessage({ pluginMessage: { type: "fetch" } }, "*");
+        if (!variables) return;
+        parent.postMessage({
+          pluginMessage: {
+            type: "send-localhost",
+            data: variables,
+            port: document.getElementById("port").value
+          }
+        }, "*");
+      });
+
+      // Hosted send
+      sendHostedBtn.addEventListener("click", function () {
+        if (!variables) return;
+        var code = pairingCodeEl.value.trim().toUpperCase();
+        if (code.length !== 6) {
+          setStatus("error", "Please enter a valid 6-character pairing code.");
+          return;
+        }
+        parent.postMessage({
+          pluginMessage: {
+            type: "send-hosted",
+            code: code,
+            fileKey: currentFileKey,
+            data: variables,
+            serverUrl: serverUrlEl.value.trim()
+          }
+        }, "*");
+      });
+
+      // Auto-uppercase pairing code
+      pairingCodeEl.addEventListener("input", function() {
+        pairingCodeEl.value = pairingCodeEl.value.toUpperCase();
       });
 
       function setStatus(cls, msg) {

@@ -4,5 +4,12 @@
   "api": "1.0.0",
   "main": "code.js",
   "ui": "ui.html",
-  "editorType": ["figma"]
+  "editorType": ["figma"],
+  "networkAccess": {
+    "allowedDomains": [
+      "http://localhost:7070",
+      "https://*.vercel.app",
+      "https://ds-validation.com"
+    ]
+  }
 }

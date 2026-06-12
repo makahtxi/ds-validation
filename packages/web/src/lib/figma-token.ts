@@ -1,15 +1,10 @@
 import { decrypt, encrypt } from "./crypto";
 import { refreshOAuthToken, type FigmaTokenKind } from "./figma-api";
 import { createServiceClient } from "./supabase/service";
+import type { Database } from "./supabase/types";
 
-interface FigmaConnectionRow {
-  id: string;
-  user_id: string;
-  kind: FigmaTokenKind;
-  encrypted_access_token: string;
-  encrypted_refresh_token: string | null;
-  expires_at: string | null;
-}
+type FigmaConnectionRow = Database["public"]["Tables"]["figma_connections"]["Row"];
+type FigmaConnectionInsert = Database["public"]["Tables"]["figma_connections"]["Insert"];
 
 class FigmaTokenRefreshError extends Error {
   constructor(message: string) {
@@ -72,9 +67,7 @@ export async function getFigmaToken(userId: string): Promise<{
   const supabase = createServiceClient();
   const { data, error } = await supabase
     .from("figma_connections")
-    .select(
-      "id, user_id, kind, encrypted_access_token, encrypted_refresh_token, expires_at",
-    )
+    .select("*")
     .eq("user_id", userId)
     .single();
 
@@ -82,7 +75,7 @@ export async function getFigmaToken(userId: string): Promise<{
     throw new Error("No Figma connection found");
   }
 
-  const row = data as unknown as FigmaConnectionRow;
+  const row = data;
   const shouldRefresh =
     row.kind === "oauth" &&
     row.expires_at &&
@@ -93,7 +86,7 @@ export async function getFigmaToken(userId: string): Promise<{
     : row;
 
   const accessToken = decrypt(effectiveRow.encrypted_access_token);
-  return { accessToken, kind: effectiveRow.kind };
+  return { accessToken, kind: effectiveRow.kind as FigmaTokenKind };
 }
 
 async function refreshWithLock(
@@ -136,7 +129,7 @@ export async function storeOAuthConnection(
       figma_user_id: figmaUserId,
       expires_at: expiresAt,
       granted_scopes: scopes,
-    },
+    } satisfies FigmaConnectionInsert,
     { onConflict: "user_id" },
   );
 
@@ -161,7 +154,7 @@ export async function storePatConnection(
       figma_user_id: figmaUser.id,
       figma_user_handle: figmaUser.handle,
       figma_user_img_url: figmaUser.img_url,
-    },
+    } satisfies FigmaConnectionInsert,
     { onConflict: "user_id" },
   );
 
