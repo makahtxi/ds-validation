@@ -5,6 +5,7 @@ import type {
   ComponentSummary,
   AuditResult,
   AuditMeta,
+  AuditFileResult,
   ConformanceCheckConfig,
   FigmaNode,
   FigmaStyle,
@@ -22,10 +23,7 @@ import { visitTextStyleNode } from "./checks/hardcoded-text-styles.js";
 import { type TokenRef, visitTokenRefNode, buildPrimitiveTokensResult } from "./checks/no-primitive-tokens.js";
 import { compositeNodeFills, checkTextContrast, isDisabledVariant } from "./checks/accessibility-contrast.js";
 
-export interface AuditFileResult {
-  audit: AuditResult;
-  components: ComponentAuditResult[];
-}
+export type { AuditFileResult };
 
 export interface AuditFileOptions {
   fileKey: string;

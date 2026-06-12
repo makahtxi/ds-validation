@@ -1,0 +1,2341 @@
+{
+  "audit": {
+    "meta": {
+      "figmaFileKey": "amizYpLxwZCeoPRVZEtLIk",
+      "figmaFileName": "Master Library",
+      "auditedAt": "2026-06-12T15:38:17.900Z",
+      "pagesAudited": [
+        "Logos",
+        "Breadcrumb",
+        "Cursors",
+        "Datepicker",
+        "Dividers",
+        "Loaders",
+        "Pagination",
+        "Scrolls",
+        "Timepicker",
+        "Tooltip"
+      ],
+      "conformanceChecks": [
+        {
+          "id": "hardcoded-colors",
+          "name": "No Hard-Coded Colors",
+          "weight": 0.25
+        },
+        {
+          "id": "hardcoded-spacing",
+          "name": "No Hard-Coded Spacing",
+          "weight": 0.15
+        },
+        {
+          "id": "hardcoded-text-styles",
+          "name": "No Hard-Coded Text Styles",
+          "weight": 0.2
+        },
+        {
+          "id": "state-variables",
+          "name": "State Variables Available",
+          "weight": 0.15
+        },
+        {
+          "id": "accessibility-contrast",
+          "name": "Accessibility Contrast",
+          "weight": 0.2
+        }
+      ]
+    },
+    "totalScore": 88,
+    "summary": {
+      "template": "audit_overview_partial",
+      "params": {
+        "componentCount": 16,
+        "totalScore": 88,
+        "skippedChecks": "No Primitive Tokens"
+      }
+    },
+    "components": [
+      {
+        "name": "Logo",
+        "score": 100,
+        "jsonPath": "components/Logo.json",
+        "passedChecks": 5,
+        "totalChecks": 5,
+        "pageName": "Logos"
+      },
+      {
+        "name": "Breadcrumbs",
+        "score": 74,
+        "jsonPath": "components/Breadcrumbs.json",
+        "passedChecks": 3,
+        "totalChecks": 5,
+        "pageName": "Breadcrumb"
+      },
+      {
+        "name": "Item-breadcrumbs 01",
+        "score": 100,
+        "jsonPath": "components/Item-breadcrumbs_01.json",
+        "passedChecks": 5,
+        "totalChecks": 5,
+        "pageName": "Breadcrumb"
+      },
+      {
+        "name": "Cursor",
+        "score": 69,
+        "jsonPath": "components/Cursor.json",
+        "passedChecks": 4,
+        "totalChecks": 5,
+        "pageName": "Cursors"
+      },
+      {
+        "name": "Input/DatePicker",
+        "score": 88,
+        "jsonPath": "components/Input_DatePicker.json",
+        "passedChecks": 3,
+        "totalChecks": 5,
+        "pageName": "Datepicker"
+      },
+      {
+        "name": "Divider/Horizontal",
+        "score": 75,
+        "jsonPath": "components/Divider_Horizontal.json",
+        "passedChecks": 4,
+        "totalChecks": 5,
+        "pageName": "Dividers"
+      },
+      {
+        "name": "Divider/Vertical",
+        "score": 100,
+        "jsonPath": "components/Divider_Vertical.json",
+        "passedChecks": 5,
+        "totalChecks": 5,
+        "pageName": "Dividers"
+      },
+      {
+        "name": "ProgressBar",
+        "score": 100,
+        "jsonPath": "components/ProgressBar.json",
+        "passedChecks": 5,
+        "totalChecks": 5,
+        "pageName": "Loaders"
+      },
+      {
+        "name": "Spinner",
+        "score": 100,
+        "jsonPath": "components/Spinner.json",
+        "passedChecks": 5,
+        "totalChecks": 5,
+        "pageName": "Loaders"
+      },
+      {
+        "name": "Pagination/Footer",
+        "score": 84,
+        "jsonPath": "components/Pagination_Footer.json",
+        "passedChecks": 4,
+        "totalChecks": 5,
+        "pageName": "Pagination"
+      },
+      {
+        "name": "Pagination/Controls",
+        "score": 74,
+        "jsonPath": "components/Pagination_Controls.json",
+        "passedChecks": 3,
+        "totalChecks": 5,
+        "pageName": "Pagination"
+      },
+      {
+        "name": "Pagination/Rows",
+        "score": 74,
+        "jsonPath": "components/Pagination_Rows.json",
+        "passedChecks": 3,
+        "totalChecks": 5,
+        "pageName": "Pagination"
+      },
+      {
+        "name": "Scroll",
+        "score": 81,
+        "jsonPath": "components/Scroll.json",
+        "passedChecks": 4,
+        "totalChecks": 5,
+        "pageName": "Scrolls"
+      },
+      {
+        "name": "Input/TimePicker",
+        "score": 89,
+        "jsonPath": "components/Input_TimePicker.json",
+        "passedChecks": 3,
+        "totalChecks": 5,
+        "pageName": "Timepicker"
+      },
+      {
+        "name": "Tooltip",
+        "score": 100,
+        "jsonPath": "components/Tooltip.json",
+        "passedChecks": 5,
+        "totalChecks": 5,
+        "pageName": "Tooltip"
+      },
+      {
+        "name": "Contextual Helper",
+        "score": 100,
+        "jsonPath": "components/Contextual_Helper.json",
+        "passedChecks": 5,
+        "totalChecks": 5,
+        "pageName": "Tooltip"
+      }
+    ]
+  },
+  "components": [
+    {
+      "componentName": "Logo",
+      "score": 100,
+      "checkResults": {
+        "hardcoded-colors": {
+          "checkId": "hardcoded-colors",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "hardcoded_colors_clean",
+            "params": {}
+          }
+        },
+        "hardcoded-spacing": {
+          "checkId": "hardcoded-spacing",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "hardcoded_spacing_clean",
+            "params": {}
+          }
+        },
+        "hardcoded-text-styles": {
+          "checkId": "hardcoded-text-styles",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "hardcoded_text_styles_clean",
+            "params": {}
+          }
+        },
+        "accessibility-contrast": {
+          "checkId": "accessibility-contrast",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "contrast_clean",
+            "params": {}
+          }
+        },
+        "state-variables": {
+          "checkId": "state-variables",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "check_not_applicable",
+            "params": {
+              "checkId": "state-variables",
+              "componentName": "Logo"
+            }
+          },
+          "notApplicable": true
+        }
+      },
+      "pageName": "Logos"
+    },
+    {
+      "componentName": "Breadcrumbs",
+      "score": 74,
+      "checkResults": {
+        "hardcoded-colors": {
+          "checkId": "hardcoded-colors",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "hardcoded_colors_clean",
+            "params": {}
+          }
+        },
+        "hardcoded-spacing": {
+          "checkId": "hardcoded-spacing",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "hardcoded_spacing_clean",
+            "params": {}
+          }
+        },
+        "hardcoded-text-styles": {
+          "checkId": "hardcoded-text-styles",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "hardcoded_text_styles_clean",
+            "params": {}
+          }
+        },
+        "accessibility-contrast": {
+          "checkId": "accessibility-contrast",
+          "score": 50,
+          "status": "partial",
+          "violations": [
+            {
+              "nodePath": "Breadcrumbs > Mode=Dark, Steps=5 > Item-breadcrumbs 01 > Breadcrumb 1",
+              "property": "fills[0]",
+              "rawValue": "1.84:1 (text: #bfbfbf, bg: #ffffff)",
+              "expected": "≥4.5:1 (WCAG AA)"
+            },
+            {
+              "nodePath": "Breadcrumbs > Mode=Dark, Steps=5 > Item-breadcrumbs 8 > Breadcrumb 1",
+              "property": "fills[0]",
+              "rawValue": "1.84:1 (text: #bfbfbf, bg: #ffffff)",
+              "expected": "≥4.5:1 (WCAG AA)"
+            },
+            {
+              "nodePath": "Breadcrumbs > Mode=Dark, Steps=5 > Item-breadcrumbs 6 > ...",
+              "property": "fills[0]",
+              "rawValue": "1.84:1 (text: #bfbfbf, bg: #ffffff)",
+              "expected": "≥4.5:1 (WCAG AA)"
+            },
+            {
+              "nodePath": "Breadcrumbs > Mode=Dark, Steps=5 > Item-breadcrumbs 9 > Breadcrumb 1",
+              "property": "fills[0]",
+              "rawValue": "1.84:1 (text: #bfbfbf, bg: #ffffff)",
+              "expected": "≥4.5:1 (WCAG AA)"
+            },
+            {
+              "nodePath": "Breadcrumbs > Mode=Dark, Steps=5 > Item-breadcrumbs 7 > Breadcrumb 4",
+              "property": "fills[0]",
+              "rawValue": "1.1:1 (text: #f4f4f4, bg: #ffffff)",
+              "expected": "≥4.5:1 (WCAG AA)"
+            },
+            {
+              "nodePath": "Breadcrumbs > Mode=Dark, Steps=4 > Item-breadcrumbs 11 > Breadcrumb 1",
+              "property": "fills[0]",
+              "rawValue": "1.84:1 (text: #bfbfbf, bg: #ffffff)",
+              "expected": "≥4.5:1 (WCAG AA)"
+            },
+            {
+              "nodePath": "Breadcrumbs > Mode=Dark, Steps=4 > Item-breadcrumbs 10 > Breadcrumb 1",
+              "property": "fills[0]",
+              "rawValue": "1.84:1 (text: #bfbfbf, bg: #ffffff)",
+              "expected": "≥4.5:1 (WCAG AA)"
+            },
+            {
+              "nodePath": "Breadcrumbs > Mode=Dark, Steps=4 > Item-breadcrumbs 9 > Breadcrumb 1",
+              "property": "fills[0]",
+              "rawValue": "1.84:1 (text: #bfbfbf, bg: #ffffff)",
+              "expected": "≥4.5:1 (WCAG AA)"
+            },
+            {
+              "nodePath": "Breadcrumbs > Mode=Dark, Steps=4 > Breadcrumb 3",
+              "property": "fills[0]",
+              "rawValue": "1.1:1 (text: #f4f4f4, bg: #ffffff)",
+              "expected": "≥4.5:1 (WCAG AA)"
+            },
+            {
+              "nodePath": "Breadcrumbs > Mode=Dark, Steps=3 > Item-breadcrumbs 11 > Breadcrumb 1",
+              "property": "fills[0]",
+              "rawValue": "1.84:1 (text: #bfbfbf, bg: #ffffff)",
+              "expected": "≥4.5:1 (WCAG AA)"
+            },
+            {
+              "nodePath": "Breadcrumbs > Mode=Dark, Steps=3 > Item-breadcrumbs 12 > Breadcrumb 1",
+              "property": "fills[0]",
+              "rawValue": "1.84:1 (text: #bfbfbf, bg: #ffffff)",
+              "expected": "≥4.5:1 (WCAG AA)"
+            },
+            {
+              "nodePath": "Breadcrumbs > Mode=Dark, Steps=3 > Breadcrumb 2",
+              "property": "fills[0]",
+              "rawValue": "1.1:1 (text: #f4f4f4, bg: #ffffff)",
+              "expected": "≥4.5:1 (WCAG AA)"
+            },
+            {
+              "nodePath": "Breadcrumbs > Mode=Dark, Steps=2 > Item-breadcrumbs 12 > Breadcrumb 1",
+              "property": "fills[0]",
+              "rawValue": "1.84:1 (text: #bfbfbf, bg: #ffffff)",
+              "expected": "≥4.5:1 (WCAG AA)"
+            },
+            {
+              "nodePath": "Breadcrumbs > Mode=Dark, Steps=2 > Breadcrumb 2",
+              "property": "fills[0]",
+              "rawValue": "1.1:1 (text: #f4f4f4, bg: #ffffff)",
+              "expected": "≥4.5:1 (WCAG AA)"
+            },
+            {
+              "nodePath": "Breadcrumbs > Mode=Dark, Steps=1 > Item-breadcrumbs 01 > Breadcrumb 1",
+              "property": "fills[0]",
+              "rawValue": "1.1:1 (text: #f4f4f4, bg: #ffffff)",
+              "expected": "≥4.5:1 (WCAG AA)"
+            }
+          ],
+          "summary": {
+            "template": "contrast_found",
+            "params": {
+              "count": 15
+            }
+          }
+        },
+        "state-variables": {
+          "checkId": "state-variables",
+          "score": 0,
+          "status": "fail",
+          "violations": [
+            {
+              "nodePath": "Breadcrumbs",
+              "property": "componentPropertyDefinitions",
+              "rawValue": "Missing: Default",
+              "expected": "State variant for \"Default\""
+            },
+            {
+              "nodePath": "Breadcrumbs",
+              "property": "componentPropertyDefinitions",
+              "rawValue": "Missing: Hover",
+              "expected": "State variant for \"Hover\""
+            },
+            {
+              "nodePath": "Breadcrumbs",
+              "property": "componentPropertyDefinitions",
+              "rawValue": "Missing: Selected",
+              "expected": "State variant for \"Selected\""
+            },
+            {
+              "nodePath": "Breadcrumbs",
+              "property": "componentPropertyDefinitions",
+              "rawValue": "Missing: Disabled",
+              "expected": "State variant for \"Disabled\""
+            },
+            {
+              "nodePath": "Breadcrumbs",
+              "property": "componentPropertyDefinitions",
+              "rawValue": "Missing: Focused",
+              "expected": "State variant for \"Focused\""
+            }
+          ],
+          "summary": {
+            "template": "state_variables_partial",
+            "params": {
+              "found": 0,
+              "total": 5
+            }
+          }
+        }
+      },
+      "pageName": "Breadcrumb"
+    },
+    {
+      "componentName": "Item-breadcrumbs 01",
+      "score": 100,
+      "checkResults": {
+        "hardcoded-colors": {
+          "checkId": "hardcoded-colors",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "hardcoded_colors_clean",
+            "params": {}
+          }
+        },
+        "hardcoded-spacing": {
+          "checkId": "hardcoded-spacing",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "hardcoded_spacing_clean",
+            "params": {}
+          }
+        },
+        "hardcoded-text-styles": {
+          "checkId": "hardcoded-text-styles",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "hardcoded_text_styles_clean",
+            "params": {}
+          }
+        },
+        "accessibility-contrast": {
+          "checkId": "accessibility-contrast",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "contrast_clean",
+            "params": {}
+          }
+        },
+        "state-variables": {
+          "checkId": "state-variables",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "check_not_applicable",
+            "params": {
+              "checkId": "state-variables",
+              "componentName": "Item-breadcrumbs 01"
+            }
+          },
+          "notApplicable": true
+        }
+      },
+      "pageName": "Breadcrumb"
+    },
+    {
+      "componentName": "Cursor",
+      "score": 69,
+      "checkResults": {
+        "hardcoded-colors": {
+          "checkId": "hardcoded-colors",
+          "score": 0,
+          "status": "fail",
+          "violations": [
+            {
+              "nodePath": "Cursor > Type=Default > Rectangle 237",
+              "property": "fills[0]",
+              "rawValue": "#363b3e",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Default > Rectangle 237",
+              "property": "strokes[0]",
+              "rawValue": "#ffffff",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=ZoomIn > Oval 38",
+              "property": "fills[0]",
+              "rawValue": "#363b3e",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=ZoomIn > Oval 38",
+              "property": "strokes[0]",
+              "rawValue": "#ffffff",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=ZoomIn > Oval 38 > Oval 38",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=ZoomIn > Oval 38 > Rectangle 1",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=ZoomIn > Oval",
+              "property": "fills[0]",
+              "rawValue": "#ffffff",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=ZoomIn > Oval > Oval",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=ZoomIn > Oval > Rectangle 2",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=ZoomIn > Oval > Rectangle 2",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=ResizeNS > Rectangle 254",
+              "property": "fills[0]",
+              "rawValue": "#363b3e",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=ResizeNS > Rectangle 254",
+              "property": "strokes[0]",
+              "rawValue": "#ffffff",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Crosshair > Rectangle 254",
+              "property": "fills[0]",
+              "rawValue": "#363b3e",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Crosshair > Rectangle 254",
+              "property": "strokes[0]",
+              "rawValue": "#ffffff",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=DefaultWhite > Rectangle 237",
+              "property": "fills[0]",
+              "rawValue": "#ffffff",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=DefaultWhite > Rectangle 237",
+              "property": "strokes[0]",
+              "rawValue": "#000000",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=ZoomOut > Oval 38",
+              "property": "fills[0]",
+              "rawValue": "#363b3e",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=ZoomOut > Oval 38",
+              "property": "strokes[0]",
+              "rawValue": "#ffffff",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=ZoomOut > Oval 38 > Oval 38",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=ZoomOut > Oval 38 > Rectangle 1",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=ZoomOut > Oval",
+              "property": "fills[0]",
+              "rawValue": "#ffffff",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=ZoomOut > Oval > Oval",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=ZoomOut > Oval > Rectangle 2",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=NotAllowed > Rectangle 237",
+              "property": "fills[0]",
+              "rawValue": "#363b3e",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=NotAllowed > Rectangle 237",
+              "property": "strokes[0]",
+              "rawValue": "#ffffff",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=NotAllowed > Oval 3",
+              "property": "fills[0]",
+              "rawValue": "#363b3e",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=NotAllowed > Oval 3",
+              "property": "strokes[0]",
+              "rawValue": "#ffffff",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=NotAllowed > Oval 3 > Path",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=NotAllowed > Oval 3 > Path",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=NotAllowed > Oval 3 > Path",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Pointer > Imported Layers Copy 4",
+              "property": "fills[0]",
+              "rawValue": "#ffffff",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Pointer > Imported Layers Copy 4",
+              "property": "strokes[0]",
+              "rawValue": "#000000",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Pointer > Imported Layers Copy 4 > Path",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Pointer > Imported Layers Copy 4 > Path",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Pointer > Imported Layers Copy 4 > Path",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Pointer > Imported Layers Copy 4 > Path",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Grabbing > Imported Layers Copy 4",
+              "property": "fills[0]",
+              "rawValue": "#ffffff",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Grabbing > Imported Layers Copy 4",
+              "property": "strokes[0]",
+              "rawValue": "#000000",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Grabbing > Imported Layers Copy 4 > Path",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Grabbing > Imported Layers Copy 4 > Path",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Grabbing > Imported Layers Copy 4 > Path",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Grabbing > Imported Layers Copy 4 > Path",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Unavailable > Oval 38",
+              "property": "fills[0]",
+              "rawValue": "#363b3e",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Unavailable > Oval 38",
+              "property": "strokes[0]",
+              "rawValue": "#ffffff",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Unavailable > Oval 38 > Path",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Unavailable > Oval 38 > Path",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Unavailable > Oval 38 > Path",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Progress > Rectangle 237",
+              "property": "fills[0]",
+              "rawValue": "#363b3e",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Progress > Rectangle 237",
+              "property": "strokes[0]",
+              "rawValue": "#ffffff",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Progress > Oval 3",
+              "property": "fills[0]",
+              "rawValue": "GRADIENT_LINEAR",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Progress > Oval 3",
+              "property": "strokes[0]",
+              "rawValue": "#ffffff",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Progress > Rectangle 8",
+              "property": "fills[0]",
+              "rawValue": "GRADIENT_LINEAR",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Progress > Rectangle 8 > Path",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Progress > Rectangle 8 > Path",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Hourglass > Rectangle 272",
+              "property": "fills[0]",
+              "rawValue": "#ffffff",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Hourglass > Rectangle 272",
+              "property": "strokes[0]",
+              "rawValue": "#000000",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Hourglass > Rectangle 272 > Path",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Hourglass > Rectangle 272 > Path",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Hourglass > Rectangle 272 > Path",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Hourglass > Rectangle 272 > Path",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Hourglass > Rectangle 272 > Path",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Hourglass > Rectangle 272 > Path",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Hourglass > Rectangle 272 > Path",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Hourglass > Rectangle 272 > Path",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Hourglass > Rectangle 272 > Path",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Hourglass > Rectangle 272 > Path",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Hourglass > Rectangle 272 > Path",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Hourglass > Rectangle 272 > Path",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Hourglass > Rectangle 272 > Path",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Hourglass > Rectangle 272 > Path",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Hourglass > Rectangle 272 > Path",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Hourglass > Rectangle 272 > Path",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Hourglass > Rectangle 272 > Path",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Hourglass > Rectangle 272 > Path",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Hourglass > Rectangle 272 > Path",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Text > Path",
+              "property": "fills[0]",
+              "rawValue": "#363b3e",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Text > Path",
+              "property": "strokes[0]",
+              "rawValue": "#ffffff",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Text > Path > Path",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Text > Path > Path",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Text > Path > Path",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Text > Path > Path",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Text > Path > Path",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Copy > Rectangle 237",
+              "property": "fills[0]",
+              "rawValue": "#363b3e",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Copy > Rectangle 237",
+              "property": "strokes[0]",
+              "rawValue": "#ffffff",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Copy > Oval 3",
+              "property": "fills[0]",
+              "rawValue": "GRADIENT_LINEAR",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Copy > Oval 3",
+              "property": "strokes[0]",
+              "rawValue": "#ffffff",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Copy > Rectangle 6",
+              "property": "fills[0]",
+              "rawValue": "#ffffff",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Move > Rectangle 254",
+              "property": "fills[0]",
+              "rawValue": "#363b3e",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Move > Rectangle 254",
+              "property": "strokes[0]",
+              "rawValue": "#ffffff",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Move > Rectangle 254 > Path",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Move > Rectangle 254 > Path",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Move > Rectangle 254 > Path",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Move > Rectangle 254 > Path",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Move > Rectangle 254 > Path",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=ResizeEW > Rectangle 254",
+              "property": "fills[0]",
+              "rawValue": "#363b3e",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=ResizeEW > Rectangle 254",
+              "property": "strokes[0]",
+              "rawValue": "#ffffff",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Resize Row > Rectangle 254",
+              "property": "fills[0]",
+              "rawValue": "#363b3e",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Resize Row > Rectangle 254",
+              "property": "strokes[0]",
+              "rawValue": "#ffffff",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Resize Row > Rectangle 254 > Path",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Resize Row > Rectangle 254 > Path",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=Resize Row > Rectangle 254 > Path",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=ResizeNWSE > Rectangle 254",
+              "property": "fills[0]",
+              "rawValue": "#363b3e",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=ResizeNWSE > Rectangle 254",
+              "property": "strokes[0]",
+              "rawValue": "#ffffff",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=ResizeN > Rectangle 254",
+              "property": "fills[0]",
+              "rawValue": "#363b3e",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=ResizeN > Rectangle 254",
+              "property": "strokes[0]",
+              "rawValue": "#ffffff",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=ResizeCol > Rectangle 254",
+              "property": "fills[0]",
+              "rawValue": "#363b3e",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=ResizeCol > Rectangle 254",
+              "property": "strokes[0]",
+              "rawValue": "#ffffff",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=ResizeCol > Rectangle 254 > Path",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=ResizeCol > Rectangle 254 > Path",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=ResizeCol > Rectangle 254 > Path",
+              "property": "fills[0]",
+              "rawValue": "#dadada",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=ResizeNESW > Rectangle 254",
+              "property": "fills[0]",
+              "rawValue": "#363b3e",
+              "expected": "A semantic color variable"
+            },
+            {
+              "nodePath": "Cursor > Type=ResizeNESW > Rectangle 254",
+              "property": "strokes[0]",
+              "rawValue": "#ffffff",
+              "expected": "A semantic color variable"
+            }
+          ],
+          "summary": {
+            "template": "hardcoded_colors_found",
+            "params": {
+              "count": 112
+            }
+          }
+        },
+        "hardcoded-spacing": {
+          "checkId": "hardcoded-spacing",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "hardcoded_spacing_clean",
+            "params": {}
+          }
+        },
+        "hardcoded-text-styles": {
+          "checkId": "hardcoded-text-styles",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "hardcoded_text_styles_clean",
+            "params": {}
+          }
+        },
+        "accessibility-contrast": {
+          "checkId": "accessibility-contrast",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "contrast_clean",
+            "params": {}
+          }
+        },
+        "state-variables": {
+          "checkId": "state-variables",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "check_not_applicable",
+            "params": {
+              "checkId": "state-variables",
+              "componentName": "Cursor"
+            }
+          },
+          "notApplicable": true
+        }
+      },
+      "pageName": "Cursors"
+    },
+    {
+      "componentName": "Input/DatePicker",
+      "score": 88,
+      "checkResults": {
+        "hardcoded-colors": {
+          "checkId": "hardcoded-colors",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "hardcoded_colors_clean",
+            "params": {}
+          }
+        },
+        "hardcoded-spacing": {
+          "checkId": "hardcoded-spacing",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "hardcoded_spacing_clean",
+            "params": {}
+          }
+        },
+        "hardcoded-text-styles": {
+          "checkId": "hardcoded-text-styles",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "hardcoded_text_styles_clean",
+            "params": {}
+          }
+        },
+        "accessibility-contrast": {
+          "checkId": "accessibility-contrast",
+          "score": 75,
+          "status": "partial",
+          "violations": [
+            {
+              "nodePath": "Input/DatePicker > Mode=Light, State=Default, Condensed=No > Input validation text field...",
+              "property": "fills[0]",
+              "rawValue": "1.84:1 (text: #bfbfbf, bg: #ffffff)",
+              "expected": "≥4.5:1 (WCAG AA)"
+            },
+            {
+              "nodePath": "Input/DatePicker > Mode=Dark, State=Default, Condensed=No > Input validation text field...",
+              "property": "fills[0]",
+              "rawValue": "2.66:1 (text: #848484, bg: #3f434a)",
+              "expected": "≥4.5:1 (WCAG AA)"
+            },
+            {
+              "nodePath": "Input/DatePicker > Mode=Light, State=Focused, Condensed=No > top-container > text > mandatory-field > Date",
+              "property": "fills[0]",
+              "rawValue": "2.63:1 (text: #03a9f4, bg: #ffffff)",
+              "expected": "≥4.5:1 (WCAG AA)"
+            },
+            {
+              "nodePath": "Input/DatePicker > Mode=Light, State=Focused, Condensed=No > top-container > text > mandatory-field > *",
+              "property": "fills[0]",
+              "rawValue": "2.63:1 (text: #03a9f4, bg: #ffffff)",
+              "expected": "≥4.5:1 (WCAG AA)"
+            },
+            {
+              "nodePath": "Input/DatePicker > Mode=Light, State=Focused, Condensed=No > Input validation text field...",
+              "property": "fills[0]",
+              "rawValue": "1.84:1 (text: #bfbfbf, bg: #ffffff)",
+              "expected": "≥4.5:1 (WCAG AA)"
+            },
+            {
+              "nodePath": "Input/DatePicker > Mode=Dark, State=Focused, Condensed=No > top-container > text > mandatory-field > Date",
+              "property": "fills[0]",
+              "rawValue": "3.78:1 (text: #03a9f4, bg: #3f434a)",
+              "expected": "≥4.5:1 (WCAG AA)"
+            },
+            {
+              "nodePath": "Input/DatePicker > Mode=Dark, State=Focused, Condensed=No > top-container > text > mandatory-field > *",
+              "property": "fills[0]",
+              "rawValue": "3.78:1 (text: #03a9f4, bg: #3f434a)",
+              "expected": "≥4.5:1 (WCAG AA)"
+            },
+            {
+              "nodePath": "Input/DatePicker > Mode=Dark, State=Focused, Condensed=No > Input validation text field...",
+              "property": "fills[0]",
+              "rawValue": "2.66:1 (text: #848484, bg: #3f434a)",
+              "expected": "≥4.5:1 (WCAG AA)"
+            },
+            {
+              "nodePath": "Input/DatePicker > Mode=Light, State=Changed, Condensed=No > Input validation text field...",
+              "property": "fills[0]",
+              "rawValue": "1.84:1 (text: #bfbfbf, bg: #ffffff)",
+              "expected": "≥4.5:1 (WCAG AA)"
+            },
+            {
+              "nodePath": "Input/DatePicker > Mode=Dark, State=Changed, Condensed=No > Input validation text field...",
+              "property": "fills[0]",
+              "rawValue": "2.66:1 (text: #848484, bg: #3f434a)",
+              "expected": "≥4.5:1 (WCAG AA)"
+            },
+            {
+              "nodePath": "Input/DatePicker > Mode=Dark, State=Default, Condensed=Yes > mandatory-field > Date",
+              "property": "fills[0]",
+              "rawValue": "1.1:1 (text: #f4f4f4, bg: #ffffff)",
+              "expected": "≥4.5:1 (WCAG AA)"
+            },
+            {
+              "nodePath": "Input/DatePicker > Mode=Dark, State=Default, Condensed=Yes > mandatory-field > *",
+              "property": "fills[0]",
+              "rawValue": "1.1:1 (text: #f4f4f4, bg: #ffffff)",
+              "expected": "≥4.5:1 (WCAG AA)"
+            },
+            {
+              "nodePath": "Input/DatePicker > Mode=Dark, State=Changed, Condensed=Yes > mandatory-field > Date",
+              "property": "fills[0]",
+              "rawValue": "1.91:1 (text: #ffa94d, bg: #ffffff)",
+              "expected": "≥4.5:1 (WCAG AA)"
+            },
+            {
+              "nodePath": "Input/DatePicker > Mode=Dark, State=Changed, Condensed=Yes > mandatory-field > *",
+              "property": "fills[0]",
+              "rawValue": "1.91:1 (text: #ffa94d, bg: #ffffff)",
+              "expected": "≥4.5:1 (WCAG AA)"
+            },
+            {
+              "nodePath": "Input/DatePicker > Mode=Dark, State=Error, Condensed=Yes > mandatory-field > Date",
+              "property": "fills[0]",
+              "rawValue": "1.89:1 (text: #ffa4a4, bg: #ffffff)",
+              "expected": "≥4.5:1 (WCAG AA)"
+            },
+            {
+              "nodePath": "Input/DatePicker > Mode=Dark, State=Error, Condensed=Yes > mandatory-field > *",
+              "property": "fills[0]",
+              "rawValue": "1.89:1 (text: #ffa4a4, bg: #ffffff)",
+              "expected": "≥4.5:1 (WCAG AA)"
+            }
+          ],
+          "summary": {
+            "template": "contrast_found",
+            "params": {
+              "count": 16
+            }
+          }
+        },
+        "state-variables": {
+          "checkId": "state-variables",
+          "score": 60,
+          "status": "partial",
+          "violations": [
+            {
+              "nodePath": "Input/DatePicker",
+              "property": "componentPropertyDefinitions",
+              "rawValue": "Missing: Hover",
+              "expected": "State variant for \"Hover\""
+            },
+            {
+              "nodePath": "Input/DatePicker",
+              "property": "componentPropertyDefinitions",
+              "rawValue": "Missing: Selected",
+              "expected": "State variant for \"Selected\""
+            }
+          ],
+          "summary": {
+            "template": "state_variables_partial",
+            "params": {
+              "found": 3,
+              "total": 5
+            }
+          }
+        }
+      },
+      "pageName": "Datepicker"
+    },
+    {
+      "componentName": "Divider/Horizontal",
+      "score": 75,
+      "checkResults": {
+        "hardcoded-colors": {
+          "checkId": "hardcoded-colors",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "hardcoded_colors_clean",
+            "params": {}
+          }
+        },
+        "hardcoded-spacing": {
+          "checkId": "hardcoded-spacing",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "hardcoded_spacing_clean",
+            "params": {}
+          }
+        },
+        "hardcoded-text-styles": {
+          "checkId": "hardcoded-text-styles",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "hardcoded_text_styles_clean",
+            "params": {}
+          }
+        },
+        "accessibility-contrast": {
+          "checkId": "accessibility-contrast",
+          "score": 0,
+          "status": "fail",
+          "violations": [
+            {
+              "nodePath": "Divider/Horizontal > Mode=Light, Type=Title, Condensed=No > Divider Title",
+              "property": "fills[0]",
+              "rawValue": "1.84:1 (text: #bfbfbf, bg: #ffffff)",
+              "expected": "≥4.5:1 (WCAG AA)"
+            },
+            {
+              "nodePath": "Divider/Horizontal > Mode=Dark, Type=Title, Condensed=No > DividerTitle/Dark > Divider Title",
+              "property": "fills[0]",
+              "rawValue": "3.5:1 (text: #868991, bg: #ffffff)",
+              "expected": "≥4.5:1 (WCAG AA)"
+            }
+          ],
+          "summary": {
+            "template": "contrast_found",
+            "params": {
+              "count": 2
+            }
+          }
+        },
+        "state-variables": {
+          "checkId": "state-variables",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "check_not_applicable",
+            "params": {
+              "checkId": "state-variables",
+              "componentName": "Divider/Horizontal"
+            }
+          },
+          "notApplicable": true
+        }
+      },
+      "pageName": "Dividers"
+    },
+    {
+      "componentName": "Divider/Vertical",
+      "score": 100,
+      "checkResults": {
+        "hardcoded-colors": {
+          "checkId": "hardcoded-colors",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "hardcoded_colors_clean",
+            "params": {}
+          }
+        },
+        "hardcoded-spacing": {
+          "checkId": "hardcoded-spacing",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "hardcoded_spacing_clean",
+            "params": {}
+          }
+        },
+        "hardcoded-text-styles": {
+          "checkId": "hardcoded-text-styles",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "hardcoded_text_styles_clean",
+            "params": {}
+          }
+        },
+        "accessibility-contrast": {
+          "checkId": "accessibility-contrast",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "contrast_clean",
+            "params": {}
+          }
+        },
+        "state-variables": {
+          "checkId": "state-variables",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "check_not_applicable",
+            "params": {
+              "checkId": "state-variables",
+              "componentName": "Divider/Vertical"
+            }
+          },
+          "notApplicable": true
+        }
+      },
+      "pageName": "Dividers"
+    },
+    {
+      "componentName": "ProgressBar",
+      "score": 100,
+      "checkResults": {
+        "hardcoded-colors": {
+          "checkId": "hardcoded-colors",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "hardcoded_colors_clean",
+            "params": {}
+          }
+        },
+        "hardcoded-spacing": {
+          "checkId": "hardcoded-spacing",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "hardcoded_spacing_clean",
+            "params": {}
+          }
+        },
+        "hardcoded-text-styles": {
+          "checkId": "hardcoded-text-styles",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "hardcoded_text_styles_clean",
+            "params": {}
+          }
+        },
+        "accessibility-contrast": {
+          "checkId": "accessibility-contrast",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "contrast_clean",
+            "params": {}
+          }
+        },
+        "state-variables": {
+          "checkId": "state-variables",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "check_not_applicable",
+            "params": {
+              "checkId": "state-variables",
+              "componentName": "ProgressBar"
+            }
+          },
+          "notApplicable": true
+        }
+      },
+      "pageName": "Loaders"
+    },
+    {
+      "componentName": "Spinner",
+      "score": 100,
+      "checkResults": {
+        "hardcoded-colors": {
+          "checkId": "hardcoded-colors",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "hardcoded_colors_clean",
+            "params": {}
+          }
+        },
+        "hardcoded-spacing": {
+          "checkId": "hardcoded-spacing",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "hardcoded_spacing_clean",
+            "params": {}
+          }
+        },
+        "hardcoded-text-styles": {
+          "checkId": "hardcoded-text-styles",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "hardcoded_text_styles_clean",
+            "params": {}
+          }
+        },
+        "accessibility-contrast": {
+          "checkId": "accessibility-contrast",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "contrast_clean",
+            "params": {}
+          }
+        },
+        "state-variables": {
+          "checkId": "state-variables",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "check_not_applicable",
+            "params": {
+              "checkId": "state-variables",
+              "componentName": "Spinner"
+            }
+          },
+          "notApplicable": true
+        }
+      },
+      "pageName": "Loaders"
+    },
+    {
+      "componentName": "Pagination/Footer",
+      "score": 84,
+      "checkResults": {
+        "hardcoded-colors": {
+          "checkId": "hardcoded-colors",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "hardcoded_colors_clean",
+            "params": {}
+          }
+        },
+        "hardcoded-spacing": {
+          "checkId": "hardcoded-spacing",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "hardcoded_spacing_clean",
+            "params": {}
+          }
+        },
+        "hardcoded-text-styles": {
+          "checkId": "hardcoded-text-styles",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "hardcoded_text_styles_clean",
+            "params": {}
+          }
+        },
+        "accessibility-contrast": {
+          "checkId": "accessibility-contrast",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "contrast_clean",
+            "params": {}
+          }
+        },
+        "state-variables": {
+          "checkId": "state-variables",
+          "score": 0,
+          "status": "fail",
+          "violations": [
+            {
+              "nodePath": "Pagination/Footer",
+              "property": "componentPropertyDefinitions",
+              "rawValue": "Missing: Default",
+              "expected": "State variant for \"Default\""
+            },
+            {
+              "nodePath": "Pagination/Footer",
+              "property": "componentPropertyDefinitions",
+              "rawValue": "Missing: Hover",
+              "expected": "State variant for \"Hover\""
+            },
+            {
+              "nodePath": "Pagination/Footer",
+              "property": "componentPropertyDefinitions",
+              "rawValue": "Missing: Selected",
+              "expected": "State variant for \"Selected\""
+            },
+            {
+              "nodePath": "Pagination/Footer",
+              "property": "componentPropertyDefinitions",
+              "rawValue": "Missing: Disabled",
+              "expected": "State variant for \"Disabled\""
+            },
+            {
+              "nodePath": "Pagination/Footer",
+              "property": "componentPropertyDefinitions",
+              "rawValue": "Missing: Focused",
+              "expected": "State variant for \"Focused\""
+            }
+          ],
+          "summary": {
+            "template": "state_variables_partial",
+            "params": {
+              "found": 0,
+              "total": 5
+            }
+          }
+        }
+      },
+      "pageName": "Pagination"
+    },
+    {
+      "componentName": "Pagination/Controls",
+      "score": 74,
+      "checkResults": {
+        "hardcoded-colors": {
+          "checkId": "hardcoded-colors",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "hardcoded_colors_clean",
+            "params": {}
+          }
+        },
+        "hardcoded-spacing": {
+          "checkId": "hardcoded-spacing",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "hardcoded_spacing_clean",
+            "params": {}
+          }
+        },
+        "hardcoded-text-styles": {
+          "checkId": "hardcoded-text-styles",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "hardcoded_text_styles_clean",
+            "params": {}
+          }
+        },
+        "accessibility-contrast": {
+          "checkId": "accessibility-contrast",
+          "score": 50,
+          "status": "partial",
+          "violations": [
+            {
+              "nodePath": "Pagination/Controls > Mode=Dark > .Input/Text > top-container > text > Label > Label",
+              "property": "fills[0]",
+              "rawValue": "1.1:1 (text: #f4f4f4, bg: #ffffff)",
+              "expected": "≥4.5:1 (WCAG AA)"
+            },
+            {
+              "nodePath": "Pagination/Controls > Mode=Dark > /200",
+              "property": "fills[0]",
+              "rawValue": "1.1:1 (text: #f4f4f4, bg: #ffffff)",
+              "expected": "≥4.5:1 (WCAG AA)"
+            }
+          ],
+          "summary": {
+            "template": "contrast_found",
+            "params": {
+              "count": 2
+            }
+          }
+        },
+        "state-variables": {
+          "checkId": "state-variables",
+          "score": 0,
+          "status": "fail",
+          "violations": [
+            {
+              "nodePath": "Pagination/Controls",
+              "property": "componentPropertyDefinitions",
+              "rawValue": "Missing: Default",
+              "expected": "State variant for \"Default\""
+            },
+            {
+              "nodePath": "Pagination/Controls",
+              "property": "componentPropertyDefinitions",
+              "rawValue": "Missing: Hover",
+              "expected": "State variant for \"Hover\""
+            },
+            {
+              "nodePath": "Pagination/Controls",
+              "property": "componentPropertyDefinitions",
+              "rawValue": "Missing: Selected",
+              "expected": "State variant for \"Selected\""
+            },
+            {
+              "nodePath": "Pagination/Controls",
+              "property": "componentPropertyDefinitions",
+              "rawValue": "Missing: Disabled",
+              "expected": "State variant for \"Disabled\""
+            },
+            {
+              "nodePath": "Pagination/Controls",
+              "property": "componentPropertyDefinitions",
+              "rawValue": "Missing: Focused",
+              "expected": "State variant for \"Focused\""
+            }
+          ],
+          "summary": {
+            "template": "state_variables_partial",
+            "params": {
+              "found": 0,
+              "total": 5
+            }
+          }
+        }
+      },
+      "pageName": "Pagination"
+    },
+    {
+      "componentName": "Pagination/Rows",
+      "score": 74,
+      "checkResults": {
+        "hardcoded-colors": {
+          "checkId": "hardcoded-colors",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "hardcoded_colors_clean",
+            "params": {}
+          }
+        },
+        "hardcoded-spacing": {
+          "checkId": "hardcoded-spacing",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "hardcoded_spacing_clean",
+            "params": {}
+          }
+        },
+        "hardcoded-text-styles": {
+          "checkId": "hardcoded-text-styles",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "hardcoded_text_styles_clean",
+            "params": {}
+          }
+        },
+        "accessibility-contrast": {
+          "checkId": "accessibility-contrast",
+          "score": 50,
+          "status": "partial",
+          "violations": [
+            {
+              "nodePath": "Pagination/Rows > Mode=Dark > Show",
+              "property": "fills[0]",
+              "rawValue": "1.1:1 (text: #f4f4f4, bg: #ffffff)",
+              "expected": "≥4.5:1 (WCAG AA)"
+            },
+            {
+              "nodePath": "Pagination/Rows > Mode=Dark > BUTTON Dropdown > Select > Select",
+              "property": "fills[0]",
+              "rawValue": "1.1:1 (text: #f4f4f4, bg: #ffffff)",
+              "expected": "≥4.5:1 (WCAG AA)"
+            },
+            {
+              "nodePath": "Pagination/Rows > Mode=Dark > Rows",
+              "property": "fills[0]",
+              "rawValue": "1.1:1 (text: #f4f4f4, bg: #ffffff)",
+              "expected": "≥4.5:1 (WCAG AA)"
+            }
+          ],
+          "summary": {
+            "template": "contrast_found",
+            "params": {
+              "count": 3
+            }
+          }
+        },
+        "state-variables": {
+          "checkId": "state-variables",
+          "score": 0,
+          "status": "fail",
+          "violations": [
+            {
+              "nodePath": "Pagination/Rows",
+              "property": "componentPropertyDefinitions",
+              "rawValue": "Missing: Default",
+              "expected": "State variant for \"Default\""
+            },
+            {
+              "nodePath": "Pagination/Rows",
+              "property": "componentPropertyDefinitions",
+              "rawValue": "Missing: Hover",
+              "expected": "State variant for \"Hover\""
+            },
+            {
+              "nodePath": "Pagination/Rows",
+              "property": "componentPropertyDefinitions",
+              "rawValue": "Missing: Selected",
+              "expected": "State variant for \"Selected\""
+            },
+            {
+              "nodePath": "Pagination/Rows",
+              "property": "componentPropertyDefinitions",
+              "rawValue": "Missing: Disabled",
+              "expected": "State variant for \"Disabled\""
+            },
+            {
+              "nodePath": "Pagination/Rows",
+              "property": "componentPropertyDefinitions",
+              "rawValue": "Missing: Focused",
+              "expected": "State variant for \"Focused\""
+            }
+          ],
+          "summary": {
+            "template": "state_variables_partial",
+            "params": {
+              "found": 0,
+              "total": 5
+            }
+          }
+        }
+      },
+      "pageName": "Pagination"
+    },
+    {
+      "componentName": "Scroll",
+      "score": 81,
+      "checkResults": {
+        "hardcoded-colors": {
+          "checkId": "hardcoded-colors",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "hardcoded_colors_clean",
+            "params": {}
+          }
+        },
+        "hardcoded-spacing": {
+          "checkId": "hardcoded-spacing",
+          "score": 0,
+          "status": "fail",
+          "violations": [
+            {
+              "nodePath": "Scroll > Mode=Dark, Orientation=Horizontal, Value=50 > Full",
+              "property": "rectangleCornerRadii.RECTANGLE_TOP_LEFT_CORNER_RADIUS",
+              "rawValue": "2",
+              "expected": "A semantic spacing variable"
+            },
+            {
+              "nodePath": "Scroll > Mode=Dark, Orientation=Horizontal, Value=50 > Full",
+              "property": "rectangleCornerRadii.RECTANGLE_BOTTOM_RIGHT_CORNER_RADIUS",
+              "rawValue": "2",
+              "expected": "A semantic spacing variable"
+            },
+            {
+              "nodePath": "Scroll > Mode=Dark, Orientation=Horizontal, Value=100 > Full",
+              "property": "rectangleCornerRadii.RECTANGLE_TOP_LEFT_CORNER_RADIUS",
+              "rawValue": "2",
+              "expected": "A semantic spacing variable"
+            },
+            {
+              "nodePath": "Scroll > Mode=Dark, Orientation=Horizontal, Value=100 > Full",
+              "property": "rectangleCornerRadii.RECTANGLE_BOTTOM_RIGHT_CORNER_RADIUS",
+              "rawValue": "2",
+              "expected": "A semantic spacing variable"
+            }
+          ],
+          "summary": {
+            "template": "hardcoded_spacing_found",
+            "params": {
+              "count": 4
+            }
+          }
+        },
+        "hardcoded-text-styles": {
+          "checkId": "hardcoded-text-styles",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "hardcoded_text_styles_clean",
+            "params": {}
+          }
+        },
+        "accessibility-contrast": {
+          "checkId": "accessibility-contrast",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "contrast_clean",
+            "params": {}
+          }
+        },
+        "state-variables": {
+          "checkId": "state-variables",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "check_not_applicable",
+            "params": {
+              "checkId": "state-variables",
+              "componentName": "Scroll"
+            }
+          },
+          "notApplicable": true
+        }
+      },
+      "pageName": "Scrolls"
+    },
+    {
+      "componentName": "Input/TimePicker",
+      "score": 89,
+      "checkResults": {
+        "hardcoded-colors": {
+          "checkId": "hardcoded-colors",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "hardcoded_colors_clean",
+            "params": {}
+          }
+        },
+        "hardcoded-spacing": {
+          "checkId": "hardcoded-spacing",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "hardcoded_spacing_clean",
+            "params": {}
+          }
+        },
+        "hardcoded-text-styles": {
+          "checkId": "hardcoded-text-styles",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "hardcoded_text_styles_clean",
+            "params": {}
+          }
+        },
+        "accessibility-contrast": {
+          "checkId": "accessibility-contrast",
+          "score": 78,
+          "status": "partial",
+          "violations": [
+            {
+              "nodePath": "Input/TimePicker > Mode=Dark, State=Default, Outside Label=No > Input validation text field...",
+              "property": "fills[0]",
+              "rawValue": "1.99:1 (text: #df0c0c, bg: #3f434a)",
+              "expected": "≥4.5:1 (WCAG AA)"
+            },
+            {
+              "nodePath": "Input/TimePicker > Mode=Dark, State=Default, Outside Label=Yes > mandatory-field > Time",
+              "property": "fills[0]",
+              "rawValue": "1.1:1 (text: #f4f4f4, bg: #ffffff)",
+              "expected": "≥4.5:1 (WCAG AA)"
+            },
+            {
+              "nodePath": "Input/TimePicker > Mode=Dark, State=Default, Outside Label=Yes > mandatory-field > *",
+              "property": "fills[0]",
+              "rawValue": "1.1:1 (text: #f4f4f4, bg: #ffffff)",
+              "expected": "≥4.5:1 (WCAG AA)"
+            },
+            {
+              "nodePath": "Input/TimePicker > Mode=Dark, State=Default, Outside Label=Yes > Input validation text field...",
+              "property": "fills[0]",
+              "rawValue": "1.99:1 (text: #df0c0c, bg: #3f434a)",
+              "expected": "≥4.5:1 (WCAG AA)"
+            },
+            {
+              "nodePath": "Input/TimePicker > Mode=Dark, State=Focused, Outside Label=No > Input validation text field...",
+              "property": "fills[0]",
+              "rawValue": "1.99:1 (text: #df0c0c, bg: #3f434a)",
+              "expected": "≥4.5:1 (WCAG AA)"
+            },
+            {
+              "nodePath": "Input/TimePicker > Mode=Dark, State=Focused, Outside Label=Yes > mandatory-field > Time",
+              "property": "fills[0]",
+              "rawValue": "1.74:1 (text: #9dc8fc, bg: #ffffff)",
+              "expected": "≥4.5:1 (WCAG AA)"
+            },
+            {
+              "nodePath": "Input/TimePicker > Mode=Dark, State=Focused, Outside Label=Yes > mandatory-field > *",
+              "property": "fills[0]",
+              "rawValue": "1.74:1 (text: #9dc8fc, bg: #ffffff)",
+              "expected": "≥4.5:1 (WCAG AA)"
+            },
+            {
+              "nodePath": "Input/TimePicker > Mode=Dark, State=Focused, Outside Label=Yes > Input validation text field...",
+              "property": "fills[0]",
+              "rawValue": "1.99:1 (text: #df0c0c, bg: #3f434a)",
+              "expected": "≥4.5:1 (WCAG AA)"
+            },
+            {
+              "nodePath": "Input/TimePicker > Mode=Dark, State=Changed, Outside Label=No > Input validation text field...",
+              "property": "fills[0]",
+              "rawValue": "1.99:1 (text: #df0c0c, bg: #3f434a)",
+              "expected": "≥4.5:1 (WCAG AA)"
+            },
+            {
+              "nodePath": "Input/TimePicker > Mode=Dark, State=Changed, Outside Label=Yes > mandatory-field > Time",
+              "property": "fills[0]",
+              "rawValue": "1.91:1 (text: #ffa94d, bg: #ffffff)",
+              "expected": "≥4.5:1 (WCAG AA)"
+            },
+            {
+              "nodePath": "Input/TimePicker > Mode=Dark, State=Changed, Outside Label=Yes > mandatory-field > *",
+              "property": "fills[0]",
+              "rawValue": "1.91:1 (text: #ffa94d, bg: #ffffff)",
+              "expected": "≥4.5:1 (WCAG AA)"
+            },
+            {
+              "nodePath": "Input/TimePicker > Mode=Dark, State=Changed, Outside Label=Yes > Input validation text field...",
+              "property": "fills[0]",
+              "rawValue": "1.99:1 (text: #df0c0c, bg: #3f434a)",
+              "expected": "≥4.5:1 (WCAG AA)"
+            },
+            {
+              "nodePath": "Input/TimePicker > Mode=Dark, State=Error, Outside Label=Yes > mandatory-field > Time",
+              "property": "fills[0]",
+              "rawValue": "1.89:1 (text: #ffa4a4, bg: #ffffff)",
+              "expected": "≥4.5:1 (WCAG AA)"
+            },
+            {
+              "nodePath": "Input/TimePicker > Mode=Dark, State=Error, Outside Label=Yes > mandatory-field > *",
+              "property": "fills[0]",
+              "rawValue": "1.89:1 (text: #ffa4a4, bg: #ffffff)",
+              "expected": "≥4.5:1 (WCAG AA)"
+            }
+          ],
+          "summary": {
+            "template": "contrast_found",
+            "params": {
+              "count": 14
+            }
+          }
+        },
+        "state-variables": {
+          "checkId": "state-variables",
+          "score": 60,
+          "status": "partial",
+          "violations": [
+            {
+              "nodePath": "Input/TimePicker",
+              "property": "componentPropertyDefinitions",
+              "rawValue": "Missing: Hover",
+              "expected": "State variant for \"Hover\""
+            },
+            {
+              "nodePath": "Input/TimePicker",
+              "property": "componentPropertyDefinitions",
+              "rawValue": "Missing: Selected",
+              "expected": "State variant for \"Selected\""
+            }
+          ],
+          "summary": {
+            "template": "state_variables_partial",
+            "params": {
+              "found": 3,
+              "total": 5
+            }
+          }
+        }
+      },
+      "pageName": "Timepicker"
+    },
+    {
+      "componentName": "Tooltip",
+      "score": 100,
+      "checkResults": {
+        "hardcoded-colors": {
+          "checkId": "hardcoded-colors",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "hardcoded_colors_clean",
+            "params": {}
+          }
+        },
+        "hardcoded-spacing": {
+          "checkId": "hardcoded-spacing",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "hardcoded_spacing_clean",
+            "params": {}
+          }
+        },
+        "hardcoded-text-styles": {
+          "checkId": "hardcoded-text-styles",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "hardcoded_text_styles_clean",
+            "params": {}
+          }
+        },
+        "accessibility-contrast": {
+          "checkId": "accessibility-contrast",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "contrast_clean",
+            "params": {}
+          }
+        },
+        "state-variables": {
+          "checkId": "state-variables",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "check_not_applicable",
+            "params": {
+              "checkId": "state-variables",
+              "componentName": "Tooltip"
+            }
+          },
+          "notApplicable": true
+        }
+      },
+      "pageName": "Tooltip"
+    },
+    {
+      "componentName": "Contextual Helper",
+      "score": 100,
+      "checkResults": {
+        "hardcoded-colors": {
+          "checkId": "hardcoded-colors",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "hardcoded_colors_clean",
+            "params": {}
+          }
+        },
+        "hardcoded-spacing": {
+          "checkId": "hardcoded-spacing",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "hardcoded_spacing_clean",
+            "params": {}
+          }
+        },
+        "hardcoded-text-styles": {
+          "checkId": "hardcoded-text-styles",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "hardcoded_text_styles_clean",
+            "params": {}
+          }
+        },
+        "accessibility-contrast": {
+          "checkId": "accessibility-contrast",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "contrast_clean",
+            "params": {}
+          }
+        },
+        "state-variables": {
+          "checkId": "state-variables",
+          "score": 100,
+          "status": "pass",
+          "violations": [],
+          "summary": {
+            "template": "check_not_applicable",
+            "params": {
+              "checkId": "state-variables",
+              "componentName": "Contextual Helper"
+            }
+          },
+          "notApplicable": true
+        }
+      },
+      "pageName": "Tooltip"
+    }
+  ]
+}
