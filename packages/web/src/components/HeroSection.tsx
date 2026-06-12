@@ -1,4 +1,4 @@
-import { gradeForScore, statusForScore } from "@/lib/utils";
+import { gradeForScore } from "@/lib/utils";
 
 interface HeroSectionProps {
   audit: {

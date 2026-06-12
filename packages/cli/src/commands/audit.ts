@@ -1,7 +1,10 @@
 import { Command } from "commander";
 import prompts from "prompts";
 import { FigmaClient } from "@ds-validation/figma";
-import { auditFile, registry } from "@ds-validation/agent";
+import {
+  auditFile,
+  registry,
+} from "@ds-validation/agent";
 import { McpVariableClient, PluginVariableClient } from "@ds-validation/mcp";
 import {
   writeAuditResult,
@@ -9,14 +12,16 @@ import {
   writeComponentResult,
   mergeAuditResults,
   buildComponentSummary,
-  type FigmaNode,
   type FigmaVariable,
+  type FigmaNode,
   type AuditResult,
   type ComponentClassification,
-  type ClassificationOverride,
 } from "@ds-validation/core";
 import { parseFileKey } from "../utils.js";
-import { collectAmbiguousComponents, loadClassifications, saveClassifications } from "@ds-validation/agent";
+import {
+  collectAmbiguousComponents,
+  FileClassificationStore,
+} from "@ds-validation/agent";
 import { loadConfig } from "../config.js";
 
 export function auditCommand(): Command {
@@ -63,8 +68,6 @@ export function auditCommand(): Command {
             );
             process.exit(1);
           }
-          // Typed as string (not string | null) so the narrowing survives inside the
-          // nested fetchVariables closure below, where control-flow narrowing is reset.
           const fileKey: string = parsedFileKey;
 
           const figmaToken =
@@ -78,12 +81,10 @@ export function auditCommand(): Command {
 
           const variableSource = options.variableSource as "rest-api" | "plugin" | "mcp" | "skip";
 
-          // Only prompt if user didn't explicitly specify --variable-source
           const userSpecifiedVariableSource = process.argv.includes('--variable-source');
           let finalVariableSource = variableSource;
           
           if (!userSpecifiedVariableSource) {
-            // Check if we should prompt
             const response = await prompts({
               type: "select",
               name: "source",
@@ -104,12 +105,8 @@ export function auditCommand(): Command {
 
           const figmaClient = new FigmaClient(figmaToken);
 
-          // Single API call returns meta, pages, and styles together. Note: at
-          // depth=1 the styles map is empty (it is derived from nodes present in
-          // the response). The audit checks read node.styleId directly and never
-          // consult this map, so an empty styles map does not affect results.
           console.log(`Fetching Figma file: ${fileKey}...`);
-          const { meta: fileMeta, pages: allPages, styles } = await figmaClient.getFileData(fileKey);
+          const { meta: fileMeta, pages: allPages } = await figmaClient.getFileData(fileKey);
           console.log(`File: ${fileMeta.name}`);
 
           let selectedPageNames: string[];
@@ -139,10 +136,6 @@ export function auditCommand(): Command {
             }
             selectedPageNames = response.pages as string[];
           }
-
-          const selectedPages = allPages.filter((p) =>
-            selectedPageNames.includes(p.name),
-          );
 
           async function fetchVariables(): Promise<{ variables: Record<string, FigmaVariable>; variablesAvailable: boolean }> {
             if (finalVariableSource === "skip") {
@@ -238,12 +231,14 @@ export function auditCommand(): Command {
           const [{ variables, variablesAvailable }, pageComponentResults] = await Promise.all([
             fetchVariables(),
             Promise.all(
-              selectedPages.map(async (page) => {
-                const t = Date.now();
-                const components = await figmaClient.getComponentNodesWithData(fileKey, page.id);
-                console.log(`  Page "${page.name}": ${components.length} components fetched in ${((Date.now() - t) / 1000).toFixed(1)}s`);
-                return { page, components };
-              }),
+              allPages
+                .filter((p) => selectedPageNames.includes(p.name))
+                .map(async (page) => {
+                  const t = Date.now();
+                  const components = await figmaClient.getComponentNodesWithData(fileKey, page.id);
+                  console.log(`  Page "${page.name}": ${components.length} components fetched in ${((Date.now() - t) / 1000).toFixed(1)}s`);
+                  return { page, components };
+                }),
             ),
           ]);
           console.log(`  Total fetch: ${((Date.now() - t0) / 1000).toFixed(1)}s`);
@@ -260,11 +255,12 @@ export function auditCommand(): Command {
           console.log(`\nAuditing ${componentNodes.size} components...`);
           const tAudit = Date.now();
 
-          const savedDecisions = loadClassifications(fileKey);
+          const classStore = new FileClassificationStore();
+          const savedDecisions = classStore.load(fileKey);
           const componentNames = Array.from(componentNodes.keys());
           const checksWithRules = registry.getAll().filter((c) => c.componentRules);
 
-          const classificationOverrides: Record<string, ClassificationOverride> = {};
+          const classificationOverrides: Record<string, { interactive?: string[]; nonInteractive?: string[] }> = {};
           if (config.checks) {
             for (const [checkId, checkConfig] of Object.entries(config.checks)) {
               if (checkConfig.rules) {
@@ -356,7 +352,7 @@ export function auditCommand(): Command {
               if (userDismissed) break;
             }
 
-            saveClassifications(fileKey, newDecisions);
+            classStore.save(fileKey, newDecisions);
             if (!userDismissed) {
               console.log("\nClassifications saved for this Figma file.");
             }
@@ -373,7 +369,7 @@ export function auditCommand(): Command {
             pageNames: selectedPageNames,
             componentNodes,
             componentPageMap,
-            styles,
+            styles: {},
             variables,
             checkOverrides,
             classifications,

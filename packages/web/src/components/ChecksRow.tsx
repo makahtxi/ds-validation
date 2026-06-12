@@ -1,4 +1,4 @@
-import { CHECK_DEFS, statusForScore } from "@/lib/utils";
+import { CHECK_DEFS } from "@/lib/utils";
 
 interface ChecksRowProps {
   audit: {
@@ -16,7 +16,7 @@ interface ChecksRowProps {
   };
 }
 
-export function ChecksRow({ audit, aggregates }: ChecksRowProps) {
+export function ChecksRow({ audit: _audit, aggregates }: ChecksRowProps) {
   return (
     <>
       <div className="section-h">
@@ -27,7 +27,6 @@ export function ChecksRow({ audit, aggregates }: ChecksRowProps) {
         {CHECK_DEFS.map((def) => {
           const agg = aggregates.byCheck[def.id];
           const pct = Math.round(agg.avg);
-          const status = statusForScore(pct);
           return (
             <div key={def.id} className="check-card">
               {/* <div className="weight">w {def.weight.toFixed(2)}</div> */}

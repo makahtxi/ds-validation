@@ -1,63 +1,24 @@
 import fs from "node:fs";
 import path from "node:path";
+import type { AuditResult, ComponentAuditResult } from "@ds-validation/core";
 
 const OUTPUT_DIR =
   process.env.AUDIT_OUTPUT_DIR || path.join(process.cwd(), "../../output");
 
-export interface AuditData {
-  meta: {
-    figmaFileKey: string;
-    figmaFileName: string;
-    auditedAt: string;
-    pagesAudited: string[];
-    conformanceChecks: { id: string; name: string; weight: number }[];
-  };
-  totalScore: number;
-  summary: { template: string; params: Record<string, string | number> };
-  components: {
-    name: string;
-    score: number;
-    jsonPath: string;
-    passedChecks: number;
-    totalChecks: number;
-    pageName: string;
-  }[];
-}
+export type { AuditResult, ComponentAuditResult };
 
-export interface ComponentData {
-  componentName: string;
-  score: number;
-  pageName: string;
-  checkResults: Record<
-    string,
-    {
-      checkId: string;
-      score: number;
-      status: string;
-      violations: {
-        nodePath: string;
-        property: string;
-        rawValue: string;
-        expected: string;
-        suggestedReplacement?: string;
-      }[];
-      summary: { template: string; params: Record<string, string | number> };
-    }
-  >;
-}
-
-export function loadAuditData(): AuditData | null {
+export function loadAuditData(): AuditResult | null {
   const filePath = path.join(OUTPUT_DIR, "audit.json");
   if (!fs.existsSync(filePath)) return null;
   const raw = fs.readFileSync(filePath, "utf-8");
-  return JSON.parse(raw) as AuditData;
+  return JSON.parse(raw) as AuditResult;
 }
 
-export function loadComponentData(name: string): ComponentData | null {
+export function loadComponentData(name: string): ComponentAuditResult | null {
   const filePath = path.join(OUTPUT_DIR, "components", `${name}.json`);
   if (!fs.existsSync(filePath)) return null;
   const raw = fs.readFileSync(filePath, "utf-8");
-  return JSON.parse(raw) as ComponentData;
+  return JSON.parse(raw) as ComponentAuditResult;
 }
 
 export function listComponents(): string[] {

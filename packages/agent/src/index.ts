@@ -9,4 +9,6 @@ export { stateVariablesCheck } from "./checks/state-variables.js";
 export { auditComponent, auditFile } from "./orchestrator.js";
 export type { AuditFileResult, AuditFileOptions } from "./orchestrator.js";
 export { classifyComponent, collectAmbiguousComponents, type ClassificationResults } from "./classifier.js";
-export { loadClassifications, saveClassifications } from "./classification-store.js";
+export { FileClassificationStore, loadClassifications, saveClassifications } from "./classification-store.js";
+export { resolveFile, runAudit } from "./runner.js";
+export type { AuditRunConfig, RunAuditOptions, ResolveFileResult } from "./runner.js";

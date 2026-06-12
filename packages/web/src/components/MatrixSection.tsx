@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { bucketForScore, statusForScore } from "@/lib/utils";
+import { bucketForScore } from "@/lib/utils";
 import { ScoreBar } from "./ScoreBar";
 
 interface TooltipData {
