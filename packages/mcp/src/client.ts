@@ -255,10 +255,6 @@ export class McpVariableClient {
         const varsById = (obj.meta as Record<string, unknown>).variables as Record<string, McpVariable>;
         variablesArray = Object.values(varsById);
       }
-      // Nested in collections format: { collections: [...], variables: [...] }
-      else if (Array.isArray(obj.collections) && Array.isArray(obj.variables)) {
-        variablesArray = obj.variables as McpVariable[];
-      }
       // REST API format with nested meta.variables containing variable collections
       else if (obj.meta && typeof obj.meta === "object") {
         const meta = obj.meta as Record<string, unknown>;

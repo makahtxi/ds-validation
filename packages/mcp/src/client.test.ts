@@ -13,7 +13,6 @@ describe("McpVariableClient", () => {
 
 describe("parseVariablesResult", () => {
   // Access private method via prototype for testing
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const client = new McpVariableClient({ command: "node", args: [] });
 
   it("handles REST API format: { meta: { variables: { id: var } } }", () => {
