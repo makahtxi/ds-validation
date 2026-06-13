@@ -330,9 +330,6 @@ export async function auditFile(
   options: AuditFileOptions,
 ): Promise<AuditFileResult> {
   const {
-    fileKey,
-    fileName,
-    pageNames,
     componentNodes,
     componentPageMap,
     styles,
@@ -342,14 +339,7 @@ export async function auditFile(
     classifications,
   } = options;
 
-  const checksToRun = registry.getAll().filter((check) => {
-    const override = checkOverrides?.[check.id];
-    if (override?.enabled === false) return false;
-    return true;
-  });
-
   const componentResults: ComponentAuditResult[] = [];
-  const componentSummaries: ComponentSummary[] = [];
 
   for (const [name, node] of componentNodes) {
     const pageName = componentPageMap.get(name) ?? "Unknown";
@@ -365,17 +355,44 @@ export async function auditFile(
       componentClassifications,
     );
     componentResults.push(result);
-    componentSummaries.push({
-      name,
+  }
+
+  return assembleAuditResult(options, componentResults);
+}
+
+/**
+ * Build the file-level {@link AuditFileResult} from a complete list of
+ * per-component results. Split out of {@link auditFile} so the chunked /
+ * resumable runner can call it after assembling component results across
+ * multiple invocations — the output is identical either way.
+ */
+export function assembleAuditResult(
+  options: Pick<
+    AuditFileOptions,
+    "fileKey" | "fileName" | "pageNames" | "checkWeights" | "checkOverrides"
+  >,
+  componentResults: ComponentAuditResult[],
+): AuditFileResult {
+  const { fileKey, fileName, pageNames, checkWeights, checkOverrides } = options;
+
+  const checksToRun = registry.getAll().filter((check) => {
+    const override = checkOverrides?.[check.id];
+    if (override?.enabled === false) return false;
+    return true;
+  });
+
+  const componentSummaries: ComponentSummary[] = componentResults.map(
+    (result) => ({
+      name: result.componentName,
       score: result.score,
-      jsonPath: `components/${sanitizeComponentName(name)}.json`,
+      jsonPath: `components/${sanitizeComponentName(result.componentName)}.json`,
       passedChecks: Object.values(result.checkResults).filter(
         (r) => r.status === "pass",
       ).length,
       totalChecks: Object.keys(result.checkResults).length,
-      pageName,
-    });
-  }
+      pageName: result.pageName,
+    }),
+  );
 
   const totalScore = computeTotalScore(
     componentResults.map((r) => r.score),

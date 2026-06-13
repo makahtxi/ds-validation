@@ -13,10 +13,7 @@ export async function createClient() {
         getAll() {
           return cookieStore.getAll();
         },
-        setAll(
-          cookiesToSet: { name: string; value: string; options: Partial<{ domain: string; path: string; maxAge: number; secure: boolean; httpOnly: boolean; sameSite: "strict" | "lax" | "none" }> }[],
-          _headers: Record<string, string>,
-        ) {
+        setAll(cookiesToSet) {
           for (const { name, value, options } of cookiesToSet) {
             cookieStore.set(name, value, options);
           }

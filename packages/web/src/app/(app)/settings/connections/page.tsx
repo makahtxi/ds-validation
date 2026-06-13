@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { Suspense, useEffect, useState, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -17,6 +17,24 @@ interface ConnectionState {
 }
 
 export default function ConnectionsPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="max-w-4xl mx-auto px-6 py-12">
+          <Skeleton className="h-8 w-48 mb-8" />
+          <div className="space-y-4">
+            <Skeleton className="h-32" />
+            <Skeleton className="h-40" />
+          </div>
+        </div>
+      }
+    >
+      <ConnectionsContent />
+    </Suspense>
+  );
+}
+
+function ConnectionsContent() {
   const searchParams = useSearchParams();
   const { toast } = useToast();
 

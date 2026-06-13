@@ -5,6 +5,7 @@ dist/
 .next/
 next-env.d.ts
 /output/
+supabase/.temp/
 .env
 .env.local
 .DS_Store
