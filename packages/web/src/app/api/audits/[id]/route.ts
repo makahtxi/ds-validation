@@ -28,7 +28,7 @@ export async function GET(
   const { data: audit } = await service
     .from("audits")
     .select(
-      "id, user_id, file_key, file_name, status, progress, selected_pages, variable_source, total_score, error_message",
+      "id, user_id, file_key, file_name, status, progress, selected_pages, variable_source, total_score, error_message, created_at",
     )
     .eq("id", id)
     .maybeSingle();
@@ -44,6 +44,22 @@ export async function GET(
     .eq("audit_id", id)
     .eq("consumed", true);
 
+  // Include component results only when done (report pages need them).
+  let components: Array<{
+    component_name: string;
+    page_name: string | null;
+    score: number | null;
+    result: Record<string, unknown>;
+  }> = [];
+  if (audit.status === "done") {
+    const { data: rows } = await service
+      .from("audit_components")
+      .select("component_name, page_name, score, result")
+      .eq("audit_id", id)
+      .order("component_name");
+    components = (rows ?? []) as typeof components;
+  }
+
   return NextResponse.json({
     id: audit.id,
     status: audit.status,
@@ -54,6 +70,8 @@ export async function GET(
     variableSource: audit.variable_source,
     totalScore: audit.total_score,
     errorMessage: audit.error_message,
+    createdAt: audit.created_at,
     variableUploadReceived: (count ?? 0) > 0,
+    components,
   });
 }
