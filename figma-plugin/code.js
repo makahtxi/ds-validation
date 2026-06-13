@@ -16,9 +16,17 @@ function collectVariables() {
   return result;
 }
 
+function payload() {
+  return {
+    type: "variables",
+    fileKey: figma.fileKey || "",
+    data: collectVariables(),
+  };
+}
+
 figma.ui.onmessage = function (msg) {
   if (msg.type === "fetch") {
-    figma.ui.postMessage({ type: "variables", data: collectVariables() });
+    figma.ui.postMessage(payload());
   }
   if (msg.type === "close") {
     figma.closePlugin();
@@ -26,4 +34,4 @@ figma.ui.onmessage = function (msg) {
 };
 
 // Auto-fetch on open
-figma.ui.postMessage({ type: "variables", data: collectVariables() });
+figma.ui.postMessage(payload());

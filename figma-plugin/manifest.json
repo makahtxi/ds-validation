@@ -4,5 +4,10 @@
   "api": "1.0.0",
   "main": "code.js",
   "ui": "ui.html",
-  "editorType": ["figma"]
+  "editorType": ["figma"],
+  "networkAccess": {
+    "allowedDomains": ["https://ds-validation.vercel.app"],
+    "devAllowedDomains": ["http://localhost:3000"],
+    "reasoning": "Sends the file's local variables to the DS Validation web app to run a design-system audit, authorized by a single-use pairing code."
+  }
 }

@@ -5,16 +5,17 @@
     <style>
       * { box-sizing: border-box; margin: 0; padding: 0; }
       body { font-family: Inter, sans-serif; font-size: 12px; padding: 16px; color: #333; }
-      h3 { font-size: 13px; font-weight: 600; margin-bottom: 12px; }
-      .row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
-      label { color: #555; white-space: nowrap; }
-      input[type="number"] {
-        width: 72px; padding: 4px 6px;
+      h3 { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+      p.sub { color: #888; margin-bottom: 12px; line-height: 1.4; }
+      label { display: block; color: #555; margin-bottom: 4px; }
+      input[type="text"] {
+        width: 100%; padding: 6px 8px;
         border: 1px solid #ccc; border-radius: 4px;
-        font-size: 12px;
+        font-size: 14px; letter-spacing: 2px; text-transform: uppercase;
       }
+      .row { margin-bottom: 10px; }
       button {
-        padding: 5px 12px; background: #18a0fb; color: #fff;
+        padding: 6px 14px; background: #18a0fb; color: #fff;
         border: none; border-radius: 4px; cursor: pointer; font-size: 12px;
       }
       button:hover { background: #0d8de3; }
@@ -24,67 +25,102 @@
       .ok    { color: #1aaa2b; }
       .error { color: #e53935; }
       #count { color: #555; margin-top: 4px; font-size: 11px; }
+      details { margin-top: 12px; }
+      summary { color: #888; cursor: pointer; font-size: 11px; }
+      details input { letter-spacing: 0; text-transform: none; font-size: 12px; margin-top: 6px; }
     </style>
   </head>
   <body>
     <h3>DS Validation</h3>
+    <p class="sub">
+      Enter the pairing code shown on the audit setup page, then send your
+      file's variables.
+    </p>
 
     <div class="row">
-      <label for="port">CLI port:</label>
-      <input type="number" id="port" value="7070" min="1024" max="65535" />
-      <button id="send-btn" disabled>Resend</button>
+      <label for="code">Pairing code</label>
+      <input type="text" id="code" placeholder="ABC123" maxlength="8" autofocus />
     </div>
 
-    <div id="status" class="info">Fetching variables…</div>
+    <button id="send-btn" disabled>Send variables</button>
+
+    <div id="status" class="info">Reading variables…</div>
     <div id="count"></div>
+
+    <details>
+      <summary>Advanced</summary>
+      <label for="app-url" style="margin-top: 8px;">App URL</label>
+      <input type="text" id="app-url" value="https://ds-validation.vercel.app" />
+    </details>
 
     <script>
       var variables = null;
+      var fileKey = "";
       var statusEl = document.getElementById("status");
-      var countEl  = document.getElementById("count");
-      var sendBtn  = document.getElementById("send-btn");
-      var portEl   = document.getElementById("port");
+      var countEl = document.getElementById("count");
+      var sendBtn = document.getElementById("send-btn");
+      var codeEl = document.getElementById("code");
+      var appUrlEl = document.getElementById("app-url");
 
       window.onmessage = function (event) {
         var msg = event.data.pluginMessage;
         if (!msg) return;
-
         if (msg.type === "variables") {
           variables = msg.data;
+          fileKey = msg.fileKey || "";
           var n = Object.keys(variables).length;
-          countEl.textContent = n + " variable" + (n !== 1 ? "s" : "") + " found";
-          sendBtn.disabled = false;
-          sendVariables();
+          countEl.textContent =
+            n + " variable" + (n !== 1 ? "s" : "") + " found";
+          setStatus("info", "Enter your pairing code and send.");
+          updateButton();
         }
       };
 
-      function sendVariables() {
-        if (!variables) return;
-        var port = portEl.value;
-        setStatus("info", "Sending to localhost:" + port + "…");
+      function updateButton() {
+        sendBtn.disabled = !variables || codeEl.value.trim().length < 4;
+      }
 
-        fetch("http://localhost:" + port + "/variables", {
+      codeEl.addEventListener("input", updateButton);
+
+      sendBtn.addEventListener("click", function () {
+        if (!variables) return;
+        var code = codeEl.value.trim().toUpperCase();
+        var base = (appUrlEl.value || "").replace(/\/+$/, "");
+        sendBtn.disabled = true;
+        setStatus("info", "Sending…");
+
+        fetch(base + "/api/variable-uploads", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(variables),
+          body: JSON.stringify({
+            code: code,
+            fileKey: fileKey,
+            variables: variables,
+          }),
         })
           .then(function (res) {
-            if (res.ok) {
-              setStatus("ok", "Variables sent — you can close this plugin.");
+            return res.json().then(function (body) {
+              return { ok: res.ok, body: body };
+            });
+          })
+          .then(function (r) {
+            if (r.ok) {
+              setStatus(
+                "ok",
+                "Variables sent — return to the web app. You can close this plugin."
+              );
             } else {
-              setStatus("error", "Server error " + res.status + ". Is the CLI running?");
+              setStatus("error", (r.body && r.body.error) || "Upload failed.");
+              updateButton();
             }
           })
           .catch(function () {
             setStatus(
               "error",
-              "Could not reach localhost:" + port + ". Start the CLI first, then reopen the plugin."
+              "Could not reach the app. Check the App URL under Advanced."
             );
+            updateButton();
           });
-      }
-
-      sendBtn.addEventListener("click", function () {
-        parent.postMessage({ pluginMessage: { type: "fetch" } }, "*");
       });
 
       function setStatus(cls, msg) {
